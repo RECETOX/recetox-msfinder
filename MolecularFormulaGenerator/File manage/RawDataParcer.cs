@@ -28,209 +28,18 @@ namespace Rfx.Riken.OsakaUniv
                 {
                     wkstr = sr.ReadLine();
                     #region parcer
-                    if (Regex.IsMatch(wkstr, "NAME:", RegexOptions.IgnoreCase) && !Regex.IsMatch(wkstr, "METABOLITENAME:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.Name = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "SCANNUMBER:", RegexOptions.IgnoreCase))
-                    {
-                        int scan;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out scan)) rawData.ScanNumber = scan; else rawData.ScanNumber = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "RETENTIONTIME:", RegexOptions.IgnoreCase))
-                    {
-                        double rt;
-                        if (double.TryParse(wkstr.Split(':')[1].Trim(), out rt)) rawData.RetentionTime = rt; else rawData.RetentionTime = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "CCS:", RegexOptions.IgnoreCase)) {
-                        double ccs;
-                        if (double.TryParse(wkstr.Split(':')[1].Trim(), out ccs)) rawData.Ccs = ccs; else rawData.Ccs = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "RETENTIONINDEX:", RegexOptions.IgnoreCase)) {
-                        double rt;
-                        if (double.TryParse(wkstr.Split(':')[1].Trim(), out rt)) rawData.RetentionIndex = rt; else rawData.RetentionIndex = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "PRECURSORMZ:", RegexOptions.IgnoreCase))
-                    {
-                        double mz;
-                        if (double.TryParse(wkstr.Split(':')[1].Trim(), out mz)) rawData.PrecursorMz = mz;
-                    }
-                    else if (Regex.IsMatch(wkstr, "PRECURSORTYPE:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.PrecursorType = wkstr.Split(':')[1].Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "INSTRUMENTTYPE:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.InstrumentType = wkstr.Split(':')[1].Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "INSTRUMENT:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.Instrument = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "Authors:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.Authors = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "License:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.License = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "SMILES:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.Smiles = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "INCHI:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.Inchi = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "INCHIKEY:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.InchiKey = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "ONTOLOGY:", RegexOptions.IgnoreCase)) {
-                        rawData.Ontology = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "IONTYPE:", RegexOptions.IgnoreCase) || Regex.IsMatch(wkstr, "IONMODE:", RegexOptions.IgnoreCase))
-                    {
-                        string mode = wkstr.Split(':')[1].Trim();
-                        if (mode.Contains("Positive") || mode.Contains("positive") || mode.Contains("P") || mode.Contains("p")) rawData.IonMode = IonMode.Positive; else rawData.IonMode = IonMode.Negative;
-                    }
-                    else if (Regex.IsMatch(wkstr, "COLLISIONENERGY:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.CollisionEnergy = getCollisionEnergy(wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim()); ;
-                    }
-                    else if (Regex.IsMatch(wkstr, "SPECTRUMTYPE:", RegexOptions.IgnoreCase))
-                    {
-                        string spectrum = wkstr.Split(':')[1].Trim();
-                        if (spectrum.Contains("Centroid") || spectrum.Contains("C")) rawData.SpectrumType = DataType.Centroid; else rawData.SpectrumType = DataType.Profile;
-                    }
-                    else if (Regex.IsMatch(wkstr, "INTENSITY:", RegexOptions.IgnoreCase))
-                    {
-                        int intensity;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intensity)) rawData.Intensity = intensity; else rawData.Intensity = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "METABOLITENAME:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.MetaboliteName = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "FORMULA:", RegexOptions.IgnoreCase))
-                    {
-                        rawData.Formula = wkstr.Split(':')[1].Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr.ToUpper(), "COMMENT.?:", RegexOptions.IgnoreCase)) {
-                        rawData.Comment = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
-                    }
-                    else if (Regex.IsMatch(wkstr, "CarbonCount:", RegexOptions.IgnoreCase)) {
-                        int intValue;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
-                            rawData.CarbonNumberFromLabeledExperiment = intValue;
-                        else
-                            rawData.CarbonNumberFromLabeledExperiment = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "NitrogenCount:", RegexOptions.IgnoreCase)) {
-                        int intValue;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
-                            rawData.NitrogenNumberFromLabeledExperiment = intValue;
-                        else
-                            rawData.NitrogenNumberFromLabeledExperiment = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "SulfurCount:", RegexOptions.IgnoreCase)) {
-                        int intValue;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
-                            rawData.SulfurNumberFromLabeledExperiment = intValue;
-                        else
-                            rawData.SulfurNumberFromLabeledExperiment = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "OxygenCount:", RegexOptions.IgnoreCase)) {
-                        int intValue;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
-                            rawData.OxygenNumberFromLabeledExperiment = intValue;
-                        else
-                            rawData.OxygenNumberFromLabeledExperiment = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "CarbonNitrogenCount:", RegexOptions.IgnoreCase)) {
-                        int intValue;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
-                            rawData.CarbonNitrogenNumberFromLabeledExperiment = intValue;
-                        else
-                            rawData.CarbonNitrogenNumberFromLabeledExperiment = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "CarbonSulfurCount:", RegexOptions.IgnoreCase)) {
-                        int intValue;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
-                            rawData.CarbonSulfurNumberFromLabeledExperiment = intValue;
-                        else
-                            rawData.CarbonSulfurNumberFromLabeledExperiment = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "NitrogenSulfurCount:", RegexOptions.IgnoreCase)) {
-                        int intValue;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
-                            rawData.NitrogenSulfurNumberFromLabeledExperiment = intValue;
-                        else
-                            rawData.NitrogenSulfurNumberFromLabeledExperiment = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "CarbonNitrogenSulfurCount:", RegexOptions.IgnoreCase)) {
-                        int intValue;
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
-                            rawData.CarbonNitrogenSulfurNumberFromLabeledExperiment = intValue;
-                        else
-                            rawData.CarbonNitrogenSulfurNumberFromLabeledExperiment = -1;
-                    }
-                    else if (Regex.IsMatch(wkstr, "IsMarked:", RegexOptions.IgnoreCase)) {
-                        var flg = false;
-                        if (bool.TryParse(wkstr.Split(':')[1].Trim(), out flg)) rawData.IsMarked = flg; else { rawData.IsMarked = flg; }
-                    }
-                    else if (Regex.IsMatch(wkstr, "Num Peaks:", RegexOptions.IgnoreCase))
-                    {
-                        int num;
+                    ParseHeaderLine(rawData, wkstr);
 
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out num))
-                        {
-                            rawData.Ms1PeakNumber = 0;
-                            rawData.Ms2PeakNumber = num;
-                            rawData.Ms2Spectrum.PeakList = spectrumParcer(sr, num);
-                            if (rawData.PrecursorMz <= 0) rawData.PrecursorMz = 0;
-                            if (rawData.PrecursorType == null) rawData.PrecursorType = "[M]+.";
-                        }
-                        else
-                        {
-                            rawData.Ms1PeakNumber = 0;
-                            rawData.Ms2PeakNumber = 0;
-                        }
-                    }
-                    else if (Regex.IsMatch(wkstr, "MSTYPE: MS1", RegexOptions.IgnoreCase))
+                    bool is_num_peaks = Regex.IsMatch(wkstr, "Num Peaks:", RegexOptions.IgnoreCase);
+                    bool is_ms1 = Regex.IsMatch(wkstr, "MSTYPE: MS1", RegexOptions.IgnoreCase);
+                    bool is_ms2 = Regex.IsMatch(wkstr, "MSTYPE: MS2", RegexOptions.IgnoreCase);
+
+                    if(is_ms1 || is_ms2 || is_num_peaks)
                     {
-                        wkstr = sr.ReadLine();
-                        int num;
-
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out num))
-                        {
-                            rawData.Ms1PeakNumber = num;
-                            rawData.Ms1Spectrum.PeakList = spectrumParcer(sr, num);
-                        }
-                        else
-                        {
-                            rawData.Ms1PeakNumber = 0;
-                        }
+                        ParsePeaks(rawData, wkstr, sr, is_num_peaks, is_ms1, is_ms2);
                     }
-                    else if (Regex.IsMatch(wkstr, "MSTYPE: MS2", RegexOptions.IgnoreCase))
-                    {
-                        wkstr = sr.ReadLine();
-                        int num;
 
-                        if (int.TryParse(wkstr.Split(':')[1].Trim(), out num))
-                        {
-                            rawData.Ms2PeakNumber = num;
-                            rawData.Ms2Spectrum.PeakList = spectrumParcer(sr, num);
 
-                        }
-                        else
-                        {
-                            rawData.Ms2PeakNumber = 0;
-                        }
-
-                        continue;
-                    }
                     #endregion
                 }
             }
@@ -238,6 +47,228 @@ namespace Rfx.Riken.OsakaUniv
             setIsotopicIons(rawData, param.Mass1Tolerance, param.MassTolType);
 
             return rawData;
+        }
+
+        private static void ParsePeaks(RawData rawData, string wkstr, StreamReader sr, bool is_num_peaks, bool is_ms1, bool is_ms2)
+        {
+            if (is_num_peaks)
+            {
+                int num;
+
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out num))
+                {
+                    rawData.Ms1PeakNumber = 0;
+                    rawData.Ms2PeakNumber = num;
+                    rawData.Ms2Spectrum.PeakList = spectrumParcer(sr, num);
+                    if (rawData.PrecursorMz <= 0) rawData.PrecursorMz = 0;
+                    if (rawData.PrecursorType == null) rawData.PrecursorType = "[M]+.";
+                }
+                else
+                {
+                    rawData.Ms1PeakNumber = 0;
+                    rawData.Ms2PeakNumber = 0;
+                }
+            }
+            else if (is_ms1)
+            {
+                wkstr = sr.ReadLine();
+                int num;
+
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out num))
+                {
+                    rawData.Ms1PeakNumber = num;
+                    rawData.Ms1Spectrum.PeakList = spectrumParcer(sr, num);
+                }
+                else
+                {
+                    rawData.Ms1PeakNumber = 0;
+                }
+            }
+            else if (is_ms2)
+            {
+                wkstr = sr.ReadLine();
+                int num;
+
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out num))
+                {
+                    rawData.Ms2PeakNumber = num;
+                    rawData.Ms2Spectrum.PeakList = spectrumParcer(sr, num);
+
+                }
+                else
+                {
+                    rawData.Ms2PeakNumber = 0;
+                }
+            }
+        }
+
+        private static void ParseHeaderLine(RawData rawData, string wkstr)
+        {
+            if (Regex.IsMatch(wkstr, "NAME:", RegexOptions.IgnoreCase) && !Regex.IsMatch(wkstr, "METABOLITENAME:", RegexOptions.IgnoreCase))
+            {
+                rawData.Name = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "SCANNUMBER:", RegexOptions.IgnoreCase))
+            {
+                int scan;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out scan)) rawData.ScanNumber = scan; else rawData.ScanNumber = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "RETENTIONTIME:", RegexOptions.IgnoreCase))
+            {
+                double rt;
+                if (double.TryParse(wkstr.Split(':')[1].Trim(), out rt)) rawData.RetentionTime = rt; else rawData.RetentionTime = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "CCS:", RegexOptions.IgnoreCase))
+            {
+                double ccs;
+                if (double.TryParse(wkstr.Split(':')[1].Trim(), out ccs)) rawData.Ccs = ccs; else rawData.Ccs = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "RETENTIONINDEX:", RegexOptions.IgnoreCase))
+            {
+                double rt;
+                if (double.TryParse(wkstr.Split(':')[1].Trim(), out rt)) rawData.RetentionIndex = rt; else rawData.RetentionIndex = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "PRECURSORMZ:", RegexOptions.IgnoreCase))
+            {
+                double mz;
+                if (double.TryParse(wkstr.Split(':')[1].Trim(), out mz)) rawData.PrecursorMz = mz;
+            }
+            else if (Regex.IsMatch(wkstr, "PRECURSORTYPE:", RegexOptions.IgnoreCase))
+            {
+                rawData.PrecursorType = wkstr.Split(':')[1].Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "INSTRUMENTTYPE:", RegexOptions.IgnoreCase))
+            {
+                rawData.InstrumentType = wkstr.Split(':')[1].Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "INSTRUMENT:", RegexOptions.IgnoreCase))
+            {
+                rawData.Instrument = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "Authors:", RegexOptions.IgnoreCase))
+            {
+                rawData.Authors = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "License:", RegexOptions.IgnoreCase))
+            {
+                rawData.License = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "SMILES:", RegexOptions.IgnoreCase))
+            {
+                rawData.Smiles = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "INCHI:", RegexOptions.IgnoreCase))
+            {
+                rawData.Inchi = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "INCHIKEY:", RegexOptions.IgnoreCase))
+            {
+                rawData.InchiKey = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "ONTOLOGY:", RegexOptions.IgnoreCase))
+            {
+                rawData.Ontology = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "IONTYPE:", RegexOptions.IgnoreCase) || Regex.IsMatch(wkstr, "IONMODE:", RegexOptions.IgnoreCase))
+            {
+                string mode = wkstr.Split(':')[1].Trim();
+                if (mode.Contains("Positive") || mode.Contains("positive") || mode.Contains("P") || mode.Contains("p")) rawData.IonMode = IonMode.Positive; else rawData.IonMode = IonMode.Negative;
+            }
+            else if (Regex.IsMatch(wkstr, "COLLISIONENERGY:", RegexOptions.IgnoreCase))
+            {
+                rawData.CollisionEnergy = getCollisionEnergy(wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim()); ;
+            }
+            else if (Regex.IsMatch(wkstr, "SPECTRUMTYPE:", RegexOptions.IgnoreCase))
+            {
+                string spectrum = wkstr.Split(':')[1].Trim();
+                if (spectrum.Contains("Centroid") || spectrum.Contains("C")) rawData.SpectrumType = DataType.Centroid; else rawData.SpectrumType = DataType.Profile;
+            }
+            else if (Regex.IsMatch(wkstr, "INTENSITY:", RegexOptions.IgnoreCase))
+            {
+                int intensity;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intensity)) rawData.Intensity = intensity; else rawData.Intensity = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "METABOLITENAME:", RegexOptions.IgnoreCase))
+            {
+                rawData.MetaboliteName = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "FORMULA:", RegexOptions.IgnoreCase))
+            {
+                rawData.Formula = wkstr.Split(':')[1].Trim();
+            }
+            else if (Regex.IsMatch(wkstr.ToUpper(), "COMMENT.?:", RegexOptions.IgnoreCase))
+            {
+                rawData.Comment = wkstr.Substring(wkstr.Split(':')[0].Length + 2).Trim();
+            }
+            else if (Regex.IsMatch(wkstr, "CarbonCount:", RegexOptions.IgnoreCase))
+            {
+                int intValue;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
+                    rawData.CarbonNumberFromLabeledExperiment = intValue;
+                else
+                    rawData.CarbonNumberFromLabeledExperiment = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "NitrogenCount:", RegexOptions.IgnoreCase))
+            {
+                int intValue;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
+                    rawData.NitrogenNumberFromLabeledExperiment = intValue;
+                else
+                    rawData.NitrogenNumberFromLabeledExperiment = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "SulfurCount:", RegexOptions.IgnoreCase))
+            {
+                int intValue;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
+                    rawData.SulfurNumberFromLabeledExperiment = intValue;
+                else
+                    rawData.SulfurNumberFromLabeledExperiment = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "OxygenCount:", RegexOptions.IgnoreCase))
+            {
+                int intValue;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
+                    rawData.OxygenNumberFromLabeledExperiment = intValue;
+                else
+                    rawData.OxygenNumberFromLabeledExperiment = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "CarbonNitrogenCount:", RegexOptions.IgnoreCase))
+            {
+                int intValue;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
+                    rawData.CarbonNitrogenNumberFromLabeledExperiment = intValue;
+                else
+                    rawData.CarbonNitrogenNumberFromLabeledExperiment = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "CarbonSulfurCount:", RegexOptions.IgnoreCase))
+            {
+                int intValue;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
+                    rawData.CarbonSulfurNumberFromLabeledExperiment = intValue;
+                else
+                    rawData.CarbonSulfurNumberFromLabeledExperiment = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "NitrogenSulfurCount:", RegexOptions.IgnoreCase))
+            {
+                int intValue;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
+                    rawData.NitrogenSulfurNumberFromLabeledExperiment = intValue;
+                else
+                    rawData.NitrogenSulfurNumberFromLabeledExperiment = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "CarbonNitrogenSulfurCount:", RegexOptions.IgnoreCase))
+            {
+                int intValue;
+                if (int.TryParse(wkstr.Split(':')[1].Trim(), out intValue))
+                    rawData.CarbonNitrogenSulfurNumberFromLabeledExperiment = intValue;
+                else
+                    rawData.CarbonNitrogenSulfurNumberFromLabeledExperiment = -1;
+            }
+            else if (Regex.IsMatch(wkstr, "IsMarked:", RegexOptions.IgnoreCase))
+            {
+                var flg = false;
+                if (bool.TryParse(wkstr.Split(':')[1].Trim(), out flg)) rawData.IsMarked = flg; else { rawData.IsMarked = flg; }
+            }
         }
 
         public static RawData RawDataFileRapidReader(string filePath) {
