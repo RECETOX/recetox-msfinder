@@ -148,14 +148,8 @@
   <data name="InchikeyClassyfireLib" xml:space="preserve">
     <value>InchikeyClassyfireDB-VS3.icd</value>
   </data>
-  <data name="InsilicoLipidSpectralLib" xml:space="preserve">
-    <value>LipidMsmsBinaryDB-VS68-AritaM.lbm2</value>
-  </data>
   <data name="LipidQueryMaster" xml:space="preserve">
     <value>LipidQueryMaster.txt</value>
-  </data>
-  <data name="MinesStructureLib" xml:space="preserve">
-    <value>MINEs-StructureDB-vs1.msd</value>
   </data>
   <data name="MsmsSpectralLib" xml:space="preserve">
     <value>MSMS-DBs-vs1.etm</value>

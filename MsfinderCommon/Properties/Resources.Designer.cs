@@ -204,29 +204,11 @@ namespace Riken.Metabolomics.MsfinderCommon.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LipidMsmsBinaryDB-VS68-AritaM.lbm2.
-        /// </summary>
-        internal static string InsilicoLipidSpectralLib {
-            get {
-                return ResourceManager.GetString("InsilicoLipidSpectralLib", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to LipidQueryMaster.txt.
         /// </summary>
         internal static string LipidQueryMaster {
             get {
                 return ResourceManager.GetString("LipidQueryMaster", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to MINEs-StructureDB-vs1.msd.
-        /// </summary>
-        internal static string MinesStructureLib {
-            get {
-                return ResourceManager.GetString("MinesStructureLib", resourceCulture);
             }
         }
         

@@ -116,15 +116,9 @@
     <None Include="Resources\InchikeyClassyfireDB-VS3.icd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\LipidMsmsBinaryDB-VS68-AritaM.lbm2">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <Content Include="Resources\LipidQueryMaster.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\MINEs-StructureDB-vs1.msd">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Resources\MsfinderFormulaDB-VS11.efd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

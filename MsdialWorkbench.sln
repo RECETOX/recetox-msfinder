@@ -14,6 +14,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mathematics", "Mathematics\Mathematics.csproj", "{BCD79C45-18B1-4532-BE67-AEF871634C2C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MolecularFormulaFinder", "MolecularFormulaGenerator\MolecularFormulaFinder.csproj", "{779B4B11-6D26-413A-AD62-717EEABB19EB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BCD79C45-18B1-4532-BE67-AEF871634C2C} = {BCD79C45-18B1-4532-BE67-AEF871634C2C}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MsfinderCommon", "MsfinderCommon\MsfinderCommon.csproj", "{3AE481E6-E44A-4F73-9430-5250D711B381}"
 EndProject
