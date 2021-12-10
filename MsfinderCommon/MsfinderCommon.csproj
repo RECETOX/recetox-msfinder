@@ -18,7 +18,7 @@
     <ProjectReference Include="..\Database\Database.csproj"/>
     <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaFinder.csproj"/>
     <ProjectReference Include="..\MsdialLcmsProcess\MsdialLcmsProcess.csproj"/>
-    <ProjectReference Include="..\PubRestApi\PugRestApi.csproj"/>
+    <ProjectReference Include="..\PubRestApi\PubRestApi.csproj"/>
     <ProjectReference Include="..\StructureFinder\StructureFinder.csproj"/>
   </ItemGroup>
 
