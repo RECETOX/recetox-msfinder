@@ -19,7 +19,7 @@
     <ProjectReference Include="..\ClassyfireApi\ClassyfireApi.csproj" />
     <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaFinder.csproj" />
     <ProjectReference Include="..\MsfinderCommon\MsfinderCommon.csproj"/>
-    <ProjectReference Include="..\PubRestApi\PugRestApi.csproj"/>
+    <ProjectReference Include="..\PubRestApi\PubRestApi.csproj"/>
     <ProjectReference Include="..\StructureFinder\StructureFinder.csproj"/>
     <Content Include="MS-FINDER-Main-Icon.ico" />
   </ItemGroup>
