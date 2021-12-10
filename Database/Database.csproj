@@ -18,4 +18,17 @@
     <ProjectReference Include="..\Mathematics\Mathematics.csproj"/>
     <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaGenerator.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Resources\LbmQueries.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\IUPAC.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AdductIonResource_Negative.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AdductIonResource_Positive.txt" />
+  </ItemGroup>
 </Project>
