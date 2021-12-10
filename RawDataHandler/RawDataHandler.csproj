@@ -1,58 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EBA05B52-F0F8-4580-91BC-4F6F952FB48A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Riken.Metabolomics.RawDataHandler</RootNamespace>
-    <AssemblyName>RawDataHandler</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AbfDataHandler, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\AbfDataHandler.dll</HintPath>
-    </Reference>
-    <Reference Include="AgilentDataHandler, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\AgilentDataHandler.dll</HintPath>
-    </Reference>
-    <Reference Include="BrukerDataHandler, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\BrukerDataHandler.dll</HintPath>
-    </Reference>
-    <Reference Include="MzmlDataHandler, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\MzmlDataHandler.dll</HintPath>
-    </Reference>
-    <Reference Include="NetCdfDataHandler, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\NetCdfDataHandler.dll</HintPath>
-    </Reference>
+    <Reference Include="..\Assemblies\AbfDataHandler.dll"/>
+    <Reference Include="..\Assemblies\AgilentDataHandler.dll"/>
+    <Reference Include="..\Assemblies\BrukerDataHandler.dll"/>
+    <Reference Include="..\Assemblies\MzmlDataHandler.dll"/>
+    <Reference Include="..\Assemblies\NetCdfDataHandler.dll"/>
+    <Reference Include="..\Assemblies\WatersDataHandler.dll"/>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
@@ -61,35 +19,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WatersDataHandler, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Assemblies\WatersDataHandler.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Common\Common.csproj"/>
+    <ProjectReference Include="..\RawDataHandlerCommon\RawDataHandlerCommon.csproj"/>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AlignedEic.cs" />
-    <Compile Include="RawDataHandler.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{11f13aa9-0af3-4c22-8bae-347035070d2f}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RawDataHandlerCommon\RawDataHandlerCommon.csproj">
-      <Project>{0b2e4876-6d24-422a-809a-ead62fffeb68}</Project>
-      <Name>RawDataHandlerCommon</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
