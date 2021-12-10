@@ -5,7 +5,6 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>Riken.Metabolomics.MsfinderConsoleApp</RootNamespace>
     <AssemblyName>MsfinderConsoleApp</AssemblyName>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,7 +15,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <None Include="App.config" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\ClassyfireApi\ClassyfireApi.csproj" />
     <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaFinder.csproj" />
