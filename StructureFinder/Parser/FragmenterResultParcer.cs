@@ -539,12 +539,12 @@ namespace Riken.Metabolomics.StructureFinder.Parser
 
         private static void errorValue()
         {
-            MessageBox.Show("Bad format: Empty value or non-figure value exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //MessageBox.Show("Bad format: Empty value or non-figure value exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private static void errorFragmnetArray()
         {
-            MessageBox.Show("Bad format: Fragment array.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            //MessageBox.Show("Bad format: Fragment array.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
     }
