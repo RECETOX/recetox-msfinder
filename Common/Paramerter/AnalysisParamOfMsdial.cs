@@ -6,28 +6,6 @@ using System.Text;
 
 namespace Rfx.Riken.OsakaUniv
 {
-    public enum SmoothingMethod
-    {
-        SimpleMovingAverage,
-        LinearWeightedMovingAverage,
-        SavitzkyGolayFilter,
-        BinomialFilter,
-        LowessFilter,
-        LoessFilter
-    }
-
-    public enum ScaleMethod
-    {
-        None, MeanCenter, ParetoScale, AutoScale
-    }
-
-    public enum TransformMethod
-    {
-        None, Log10, QuadRoot
-    }
-
-    public enum DeconvolutionType { One, Both }
-
     [DataContract]
     public class AnalysisParamOfMsdial
     {
