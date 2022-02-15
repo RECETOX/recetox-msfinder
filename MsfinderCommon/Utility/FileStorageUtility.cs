@@ -18,10 +18,11 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             var sb = new StringBuilder();
             var currentDir = Directory.GetCurrentDirectory();
             //sb.Append(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath));
-            sb.Append(currentDir);
-            sb.Append("\\Resources").Append("\\");
-            sb.Append(Properties.Resources.ResourceManager.GetString(file));
-            return sb.ToString();
+            return Path.Combine(currentDir, "Resources", Properties.Resources.ResourceManager.GetString(file));
+            //sb.Append(currentDir);
+            //sb.Append("\\Resources").Append("\\");
+            //sb.Append(Properties.Resources.ResourceManager.GetString(file));
+            //return sb.ToString();
         }
 
         public static ObservableCollection<MsfinderQueryFile> GetAnalysisFileBeanCollection(string importFolderPath) {
