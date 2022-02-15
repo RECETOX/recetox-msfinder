@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net4.5</TargetFramework>
     <RootNamespace>Riken.Metabolomics.Classfire</RootNamespace>
   </PropertyGroup>
 <ItemGroup>

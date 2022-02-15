@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net4.5</TargetFramework>
     <RootNamespace>Riken.Metabolomics.MsfinderConsoleApp</RootNamespace>
     <AssemblyName>MsfinderConsoleApp</AssemblyName>
   </PropertyGroup>

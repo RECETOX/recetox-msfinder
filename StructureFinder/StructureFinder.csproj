@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net4.5</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -19,7 +19,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
-    <Reference Include="../Assemblies/cdk-1.4.19.dll" />
+    <Reference Include="..\Assemblies\cdk-1.4.19.dll" />
     <ProjectReference Include="..\Common\Common.csproj"/>
     <ProjectReference Include="..\Database\Database.csproj"/>
     <ProjectReference Include="..\ClassyfireApi\ClassyfireApi.csproj"/>
