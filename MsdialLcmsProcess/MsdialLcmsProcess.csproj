@@ -17,7 +17,7 @@
     <ProjectReference Include="..\Common\Common.csproj"/>
     <ProjectReference Include="..\DataProcessing\DataProcessing.csproj"/>
     <ProjectReference Include="..\Mathematics\Mathematics.csproj"/>
-    <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaFinder.csproj"/>
+    <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaGenerator.csproj"/>
     <ProjectReference Include="..\Database\Database.csproj"/>
     <ProjectReference Include="..\IsotopeRatioCalculator\IsotopeRatioCalculator.csproj"/>
     <ProjectReference Include="..\RawDataHandler\RawDataHandler.csproj"/>

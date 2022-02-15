@@ -17,7 +17,7 @@
     <Reference Include="System.Xml" />
     <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\ClassyfireApi\ClassyfireApi.csproj" />
-    <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaFinder.csproj" />
+    <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaGenerator.csproj" />
     <ProjectReference Include="..\MsfinderCommon\MsfinderCommon.csproj"/>
     <ProjectReference Include="..\PubRestApi\PubRestApi.csproj"/>
     <ProjectReference Include="..\StructureFinder\StructureFinder.csproj"/>

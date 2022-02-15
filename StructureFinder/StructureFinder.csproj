@@ -24,7 +24,7 @@
     <ProjectReference Include="..\Database\Database.csproj"/>
     <ProjectReference Include="..\ClassyfireApi\ClassyfireApi.csproj"/>
     <ProjectReference Include="..\Mathematics\Mathematics.csproj"/>
-    <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaFinder.csproj"/>
+    <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaGenerator.csproj"/>
     <PackageReference Include="IKVM" Version="7.4.5196.0" />
     <PackageReference Include="MessagePack" Version="1.7.3.4" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
