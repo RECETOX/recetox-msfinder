@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <TargetFramework>net4.5</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -20,16 +19,19 @@
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
     <Reference Include="..\Assemblies\cdk-1.4.19.dll" />
-    <ProjectReference Include="..\Common\Common.csproj"/>
-    <ProjectReference Include="..\Database\Database.csproj"/>
-    <ProjectReference Include="..\ClassyfireApi\ClassyfireApi.csproj"/>
-    <ProjectReference Include="..\Mathematics\Mathematics.csproj"/>
-    <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaGenerator.csproj"/>
+    <ProjectReference Include="..\Common\Common.csproj" />
+    <ProjectReference Include="..\Database\Database.csproj" />
+    <ProjectReference Include="..\ClassyfireApi\ClassyfireApi.csproj" />
+    <ProjectReference Include="..\Mathematics\Mathematics.csproj" />
+    <ProjectReference Include="..\MolecularFormulaGenerator\MolecularFormulaGenerator.csproj" />
     <PackageReference Include="IKVM" Version="7.4.5196.0" />
     <PackageReference Include="MessagePack" Version="1.7.3.4" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.310801">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
   </ItemGroup>
-
 </Project>
