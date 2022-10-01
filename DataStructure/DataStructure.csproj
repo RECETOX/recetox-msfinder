@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net4.5</TargetFramework>
+    <TargetFramework>net4.8</TargetFramework>
     <RootNamespace>Rfx.Riken.OsakaUniv</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
