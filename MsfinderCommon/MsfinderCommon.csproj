@@ -21,5 +21,52 @@
     <ProjectReference Include="..\PubRestApi\PubRestApi.csproj"/>
     <ProjectReference Include="..\StructureFinder\StructureFinder.csproj"/>
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Include="Resources\AdductNegatives.anf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="app.config" />
+    <None Include="Resources\AdductPositives.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AdductNegatives.txt" />
+    <Content Include="Resources\AdductPositives.apf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ChemOntologyDB_vs2.cho">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\EiFragmentDB_vs1.eif">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\EIMS-DBs-vs1.egm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\InchikeyClassyfireDB-VS3.icd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="Resources\LipidQueryMaster.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\MsfinderFormulaDB-VS11.efd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\MsfinderStructureDB-VS13.esd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\MSMS-DBs-vs1.etm">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\NeutralLossDB_vs2.ndb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\ProductIonLib_vs1.pid">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Resources\UniqueFragmentLib_vs1.ufd">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

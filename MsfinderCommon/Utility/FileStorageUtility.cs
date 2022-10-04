@@ -18,7 +18,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             var sb = new StringBuilder();
             var currentDir = Directory.GetCurrentDirectory();
             //sb.Append(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath));
-            return Path.Combine(currentDir, "Resources", Properties.Resources.ResourceManager.GetString(file));
+            return Path.Combine(currentDir, "MsfinderConsoleApp\\bin\\Debug\\net6.0\\Resources", Properties.Resources.ResourceManager.GetString(file));
             //sb.Append(currentDir);
             //sb.Append("\\Resources").Append("\\");
             //sb.Append(Properties.Resources.ResourceManager.GetString(file));
