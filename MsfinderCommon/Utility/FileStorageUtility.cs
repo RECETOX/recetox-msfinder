@@ -19,7 +19,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             var currentDir = Directory.GetCurrentDirectory();
             //sb.Append(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath));
             sb.Append(currentDir);
-            sb.Append("\\Resources").Append("\\");
+            sb.Append("\\MsFinder\\bin\\Debug\\Resources").Append("\\");
             sb.Append(Properties.Resources.ResourceManager.GetString(file));
             return sb.ToString();
         }
