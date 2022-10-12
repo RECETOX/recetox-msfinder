@@ -31,6 +31,8 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
                     return predictProcess(inputFolder, methodFile, outputFolder);
                 case "mssearch":
                     return mssearchProcess(inputFolder, methodFile, outputFolder);
+                case "annotate":
+                    return annotateProcess(inputFolder, methodFile, outputFolder);
                 default:
                     Console.WriteLine("Invalid analysis type. Valid options are: 'predict', 'mssearch'");
                     return -1;
@@ -40,17 +42,17 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
        
        
         private static int annotatorRun(string[] args) {
-            if (args[0] != "generate" && args[0] != "annotate") {
-                Console.Error.WriteLine("error message: the first word must be 'generate' or 'annotate'");
+            if (args[0] != "generate") {
+                Console.Error.WriteLine("error message: the first word must be 'generate'");
                 return -1;
             }
             var method = args[0];
             if (method == "generate") {
                 return generateProcess(args);
             }
-            else if (method == "annotate") {
-                return annotateProcess(args);
-            }
+            //else if (method == "annotate") {
+            //    return annotateProcess(args);
+            //}
             else {
                 return -1;
             }
@@ -69,16 +71,16 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
         }
 
        
-        private static int annotateProcess(string[] args) {
-            var inputFolder = string.Empty;
-            var methodFile = string.Empty;
-            for (int i = 1; i < args.Length - 1; i++) {
-                if (args[i] == "-i") inputFolder = args[i + 1];
-                else if (args[i] == "-m") methodFile = args[i + 1];
-            }
-            if (inputFolder == string.Empty || methodFile == string.Empty)
-                return argsAnnotatorError();
-            return new AnnotateProcess().Run(inputFolder, methodFile);
+        private static int annotateProcess(string inputFolder,  string methodFile, string outputfolder) {
+            //var inputFolder = string.Empty;
+            //var methodFile = string.Empty;
+            //for (int i = 1; i < args.Length - 1; i++) {
+            //    if (args[i] == "-i") inputFolder = args[i + 1];
+            //    else if (args[i] == "-m") methodFile = args[i + 1];
+            //}
+            //if (inputFolder == string.Empty || methodFile == string.Empty)
+            //    return argsAnnotatorError();
+            return new AnnotateProcess().Run(inputFolder, methodFile, outputfolder);
         }
 
 

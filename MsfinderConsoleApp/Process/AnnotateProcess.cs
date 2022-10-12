@@ -31,7 +31,7 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
         private List<FragmentLibrary> eiFragmentDB;
         private List<ChemicalOntology> chemicalOntologies;
 
-        public int Run(string input, string methodFile) {
+        public int Run(string input, string methodFile, string outputfolder) {
 
             Console.WriteLine("Loading library files..");
 
@@ -89,7 +89,9 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             #endregion
 
             Console.WriteLine("Start processing..");
-            return executeProcess();
+            executeProcess();
+            FileStorageUtility.PeakAnnotationResultExportAsMsp(input, this.param, outputfolder);
+            return 1;
         }
 
         private int executeProcess() {

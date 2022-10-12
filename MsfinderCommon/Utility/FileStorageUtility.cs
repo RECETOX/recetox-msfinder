@@ -2,6 +2,7 @@
 using Rfx.Riken.OsakaUniv.MessagePack;
 using Riken.Metabolomics.MsfinderCommon.Query;
 using Riken.Metabolomics.StructureFinder.Parser;
+using Riken.Metabolomics.StructureFinder.Result;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -440,6 +441,174 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             foreach (var file in structureFiles) {
                 File.Delete(file);
             }
+        }
+        public static void PeakAnnotationResultExportAsMsp(string input, AnalysisParamOfMsfinder param, string exportFilePath)
+        {
+            using (var sw = new StreamWriter(exportFilePath, false, Encoding.ASCII))
+            {
+                var files = FileStorageUtility.GetAnalysisFileBeanCollection(input);
+                //var files = queryFiles;
+                //var param = mainWindowVM.DataStorageBean.AnalysisParameter;
+                var error = string.Empty;
+
+                foreach (var rawfile in files)
+                {
+                    var rawData = RawDataParcer.RawDataFileReader(rawfile.RawDataFilePath, param);
+                    var formulaResults = FormulaResultParcer.FormulaResultReader(rawfile.FormulaFilePath, out error).OrderByDescending(n => n.TotalScore).ToList();
+                    if (error != string.Empty) {
+                        Console.WriteLine(error);
+                    }
+
+                    var sfdFiles = System.IO.Directory.GetFiles(rawfile.StructureFolderPath);
+                    var sfdResults = new List<FragmenterResult>();
+
+                    foreach (var sfdFile in sfdFiles)
+                    {
+                        var sfdResult = FragmenterResultParcer.FragmenterResultReader(sfdFile);
+                        var formulaString = System.IO.Path.GetFileNameWithoutExtension(sfdFile);
+                        sfdResultMerge(sfdResults, sfdResult, formulaString);
+                    }
+                    sfdResults = sfdResults.OrderByDescending(n => n.TotalScore).ToList();
+                    writeResultAsMsp(sw, rawData, formulaResults, sfdResults, param);
+                }
+            }
+        }
+
+        private static void writeResultAsMsp(StreamWriter sw, Rfx.Riken.OsakaUniv.RawData rawData, List<FormulaResult> formulaResults, List<FragmenterResult> sfdResults, AnalysisParamOfMsfinder param)
+        {
+            sw.WriteLine("NAME: " + rawData.Name);
+            sw.WriteLine("SCANNUMBER: " + rawData.ScanNumber);
+            sw.WriteLine("RETENTIONTIME: " + rawData.RetentionTime);
+            sw.WriteLine("RETENTIONINDEX: " + rawData.RetentionIndex);
+            sw.WriteLine("PRECURSORMZ: " + rawData.PrecursorMz);
+            sw.WriteLine("PRECURSORTYPE: " + rawData.PrecursorType);
+            sw.WriteLine("IONMODE: " + rawData.IonMode);
+            sw.WriteLine("SPECTRUMTYPE: " + rawData.SpectrumType);
+            sw.WriteLine("FORMULA: " + rawData.Formula);
+            sw.WriteLine("INCHIKEY: " + rawData.InchiKey);
+            sw.WriteLine("INCHI: " + rawData.Inchi);
+            sw.WriteLine("SMILES: " + rawData.Smiles);
+            sw.WriteLine("AUTHORS: " + rawData.Authors);
+            sw.WriteLine("COLLISIONENERGY: " + rawData.CollisionEnergy);
+            sw.WriteLine("INSTRUMENT: " + rawData.Instrument);
+            sw.WriteLine("INSTRUMENTTYPE: " + rawData.InstrumentType);
+            sw.WriteLine("IONIZATION: " + rawData.Ionization);
+            sw.WriteLine("LICENSE: " + rawData.License);
+            sw.WriteLine("COMMENT: " + rawData.Comment);
+
+            var spectra = rawData.Ms2Spectrum.PeakList.OrderBy(n => n.Mz).ToList();
+            var maxIntensity = spectra.Max(n => n.Intensity);
+            var spectraList = new List<string>();
+            var ms2Peaklist = FragmentAssigner.GetCentroidMsMsSpectrum(rawData);
+            //var commentList = FragmentAssigner.IsotopicPeakAssignmentForComment(ms2Peaklist, param.Mass2Tolerance, param.MassTolType);
+            for (int i = 0; i < rawData.Ms2PeakNumber; i++)
+            {
+                var mz = spectra[i].Mz;
+                var intensity = spectra[i].Intensity;
+                if (intensity / maxIntensity * 100 < param.RelativeAbundanceCutOff) continue;
+                var comment = "";
+
+                var originalComment = spectra[i].Comment;
+                var additionalComment = getProductIonComment(mz, formulaResults, sfdResults, rawData.IonMode);
+                if (originalComment != "")
+                    comment = originalComment + "; " + additionalComment;
+                else
+                    comment = additionalComment;
+
+                var peakString = string.Empty;
+                if (comment == string.Empty)
+                    peakString = Math.Round(mz, 5) + "\t" + intensity;
+                else
+                    peakString = Math.Round(mz, 5) + "\t" + intensity + "\t" + "\"" + comment + "\"";
+
+                spectraList.Add(peakString);
+            }
+            sw.WriteLine("Num Peaks: " + spectraList.Count);
+            for (int i = 0; i < spectraList.Count; i++)
+                sw.WriteLine(spectraList[i]);
+
+            sw.WriteLine();
+        }
+
+        private static string getProductIonComment(double mz, List<FormulaResult> formulaResults, List<FragmenterResult> sfdResults, IonMode ionMode) {
+            if (sfdResults == null || sfdResults.Count == 0) return string.Empty;
+            if (formulaResults == null || formulaResults.Count == 0) return string.Empty;
+
+            var productIonResult = formulaResults[0].ProductIonResult;
+            var annotationResult = formulaResults[0].AnnotatedIonResult;
+            var fragments = sfdResults[0].FragmentPics;
+            if (fragments == null || fragments.Count == 0) { return ""; }
+
+            foreach (var frag in fragments) {
+                if (Math.Abs(frag.Peak.Mz - mz) < 0.00001) {
+                    var annotation = GetLabelForInsilicoSpectrum(frag.MatchedFragmentInfo.Formula, frag.MatchedFragmentInfo.RearrangedHydrogen, ionMode, frag.MatchedFragmentInfo.AssignedAdductString);
+                    var comment = "Theoretical m/z " + Math.Round(frag.MatchedFragmentInfo.MatchedMass, 6) + ", Mass diff " + Math.Round(frag.MatchedFragmentInfo.Massdiff, 3) + " (" + Math.Round(frag.MatchedFragmentInfo.Ppm, 3) + " ppm), SMILES " + frag.MatchedFragmentInfo.Smiles + ", " + "Annotation " + annotation + ", " + "Rule of HR " + frag.MatchedFragmentInfo.IsHrRule;
+                    return comment;
+                }
+            }
+
+            if (productIonResult.Count == 0) return string.Empty;
+
+            foreach (var product in productIonResult) {
+                if (Math.Abs(product.Mass - mz) < 0.00001) {
+                    var ppm = Math.Round((mz - product.Mass) / product.Mass * 1000000, 3);
+                    var comment = "Theoretical m/z " + Math.Round(product.Formula.Mass, 6) + ", Mass diff " + Math.Round(product.MassDiff, 3) +" (" + ppm + " ppm), Formula " + product.Formula.FormulaString;
+                    return comment;
+                }
+            }
+
+            if (annotationResult.Count == 0) return string.Empty;
+
+            foreach (var ion in annotationResult) {
+                if(Math.Abs(ion.AccurateMass - mz) < 0.00001) {                    
+                    var comment = "";
+                    if(ion.PeakType == AnnotatedIon.AnnotationType.Adduct) {
+                        comment = "Adduct ion, " + ion.AdductIon.AdductIonName + ", linkedMz " + ion.LinkedAccurateMass;
+                    }else if(ion.PeakType == AnnotatedIon.AnnotationType.Isotope) {
+                        comment = "Isotopic ion, M+" + ion.IsotopeWeightNumber  + ", linkedMz " + ion.LinkedAccurateMass;
+                     //   comment = "Isotopic ion, " + ion.IsotopeName + ", linkedMz " + ion.LinkedAccurateMass;
+                    }
+                    return comment;
+                }
+            }
+
+            return string.Empty;
+        }
+        private static void sfdResultMerge(List<FragmenterResult> mergedList, List<FragmenterResult> results, string formulaString = "")
+        {
+            if (results == null || results.Count == 0) return;
+
+            foreach (var result in results)
+            {
+                result.Formula = formulaString;
+                mergedList.Add(result);
+            }
+        }
+        public static string GetLabelForInsilicoSpectrum(string formula, double penalty, IonMode ionMode, string adductString)
+        {
+            var hydrogen = (int)Math.Abs(Math.Round(penalty, 0));
+            var hydrogenString = hydrogen.ToString(); if (hydrogen == 1) hydrogenString = string.Empty;
+            var ionString = string.Empty; if (ionMode == IonMode.Positive) ionString = "+"; else ionString = "-";
+            var frgString = "[" + formula;
+
+            if (penalty < 0)
+            {
+                frgString += "-" + hydrogenString + "H";
+                if (adductString != null && adductString != string.Empty) frgString += adductString;
+            }
+            else if (penalty > 0)
+            {
+                frgString += "+" + hydrogenString + "H";
+                if (adductString != null && adductString != string.Empty) frgString += adductString;
+            }
+            else
+            {
+                if (adductString != null && adductString != string.Empty) frgString += adductString;
+            }
+
+            frgString += "]" + ionString;
+
+            return frgString;
         }
     }
 }
