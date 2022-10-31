@@ -27,7 +27,7 @@
             "WARNING17": "*********************************************************************************",
             //"preLaunchTask": "build",
             "program": "${workspaceFolder}/MsFinder/bin/Debug/MsFinderConsoleApp.exe",
-            "args": ["annotate", "-i", "C:\\Users\\530713\\Data\\MS-FINDER\\sample","-m","C:\\Users\\530713\\Data\\MS-FINDER\\MSFINDER.INI","-o", "C:\\Users\\530713\\Data\\MS-FINDER\\sample\\output\\out.msp"],
+            "args": ["annotate", "-i", "","-m","","-o", ""],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
             "stopAtEntry": false
