@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 //using System.Windows;
 //using System.Windows.Media;
 
@@ -21,7 +22,12 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             string workingDirectory = AppDomain.CurrentDomain.BaseDirectory;
             //sb.Append(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath));
             sb.Append(workingDirectory);
-            sb.Append("\\Resources").Append("\\");
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                sb.Append("\\Resources").Append("\\");   
+            }
+            else{
+                sb.Append("Resources").Append("/");
+            }
             sb.Append(Properties.Resources.ResourceManager.GetString(file));
             return sb.ToString();
         }
@@ -50,11 +56,17 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
 
             // set formula files and structure folder paths
             foreach (var file in analysisFileBeanCollection) {
-                var formulaFilePath = importFolderPath + "\\" + file.RawDataFileName + "." + SaveFileFormat.fgt;
+                var formulaFilePath = importFolderPath + "/" + file.RawDataFileName + "." + SaveFileFormat.fgt;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                    formulaFilePath = importFolderPath + "\\" + file.RawDataFileName + "." + SaveFileFormat.fgt;
+                }
                 file.FormulaFilePath = formulaFilePath;
                 file.FormulaFileName = file.RawDataFileName;
 
-                file.StructureFolderPath = importFolderPath + "\\" + file.RawDataFileName;
+                file.StructureFolderPath = importFolderPath + "/" + file.RawDataFileName;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                    file.StructureFolderPath = importFolderPath + "\\" + file.RawDataFileName;
+                }
                 file.StructureFolderName = file.RawDataFileName;
 
                 if (!System.IO.Directory.Exists(file.StructureFolderPath)) {
@@ -434,7 +446,11 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
         }
 
         public static string GetStructureDataFilePath(string folderPath, string formula) {
-            return folderPath + "\\" + formula + "." + SaveFileFormat.sfd;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                return folderPath + "\\" + formula + "." + SaveFileFormat.sfd;
+            }else{
+                return folderPath + "/" + formula + "." + SaveFileFormat.sfd;
+            }
         }
 
         public static void DeleteSfdFiles(string[] structureFiles) {
