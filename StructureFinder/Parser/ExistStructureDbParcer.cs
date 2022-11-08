@@ -24,7 +24,6 @@ namespace Riken.Metabolomics.StructureFinder.Parser
             string dbNames, errorString;
 
             if (ErrorHandler.IsFileLocked(file, out errorString)) {
-                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
 
@@ -97,7 +96,6 @@ namespace Riken.Metabolomics.StructureFinder.Parser
             double dbMass;
 
             if (ErrorHandler.IsFileLocked(file, out errorString)) {
-                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
 
@@ -144,7 +142,6 @@ namespace Riken.Metabolomics.StructureFinder.Parser
             double dbMass;
 
             if (ErrorHandler.IsFileLocked(file, out errorString)) {
-                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
 

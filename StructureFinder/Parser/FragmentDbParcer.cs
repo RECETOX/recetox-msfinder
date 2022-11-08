@@ -76,7 +76,6 @@ namespace Riken.Metabolomics.StructureFinder.Parser
 
             var errorString = string.Empty;
             if (ErrorHandler.IsFileLocked(file, out errorString)) {
-                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return null;
             }
 
