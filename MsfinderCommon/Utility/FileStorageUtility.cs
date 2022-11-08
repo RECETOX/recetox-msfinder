@@ -490,60 +490,61 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             }
         }
 
-        private static void writeResultAsMsp(StreamWriter sw, Rfx.Riken.OsakaUniv.RawData rawData, List<FormulaResult> formulaResults, List<FragmenterResult> sfdResults, AnalysisParamOfMsfinder param)
-        {
-            sw.WriteLine("NAME: " + rawData.Name);
-            sw.WriteLine("SCANNUMBER: " + rawData.ScanNumber);
-            sw.WriteLine("RETENTIONTIME: " + rawData.RetentionTime);
-            sw.WriteLine("RETENTIONINDEX: " + rawData.RetentionIndex);
-            sw.WriteLine("PRECURSORMZ: " + rawData.PrecursorMz);
-            sw.WriteLine("PRECURSORTYPE: " + rawData.PrecursorType);
-            sw.WriteLine("IONMODE: " + rawData.IonMode);
-            sw.WriteLine("SPECTRUMTYPE: " + rawData.SpectrumType);
-            sw.WriteLine("FORMULA: " + rawData.Formula);
-            sw.WriteLine("INCHIKEY: " + rawData.InchiKey);
-            sw.WriteLine("INCHI: " + rawData.Inchi);
-            sw.WriteLine("SMILES: " + rawData.Smiles);
-            sw.WriteLine("AUTHORS: " + rawData.Authors);
-            sw.WriteLine("COLLISIONENERGY: " + rawData.CollisionEnergy);
-            sw.WriteLine("INSTRUMENT: " + rawData.Instrument);
-            sw.WriteLine("INSTRUMENTTYPE: " + rawData.InstrumentType);
-            sw.WriteLine("IONIZATION: " + rawData.Ionization);
-            sw.WriteLine("LICENSE: " + rawData.License);
-            sw.WriteLine("COMMENT: " + rawData.Comment);
+        private static void writeResultAsMsp(StreamWriter sw, List<Rfx.Riken.OsakaUniv.RawData> rawDataList, List<FormulaResult> formulaResults, List<FragmenterResult> sfdResults, AnalysisParamOfMsfinder param) {
+            foreach (var rawData in rawDataList) {
+                sw.WriteLine("NAME: " + rawData.Name);
+                sw.WriteLine("SCANNUMBER: " + rawData.ScanNumber);
+                sw.WriteLine("RETENTIONTIME: " + rawData.RetentionTime);
+                sw.WriteLine("RETENTIONINDEX: " + rawData.RetentionIndex);
+                sw.WriteLine("PRECURSORMZ: " + rawData.PrecursorMz);
+                sw.WriteLine("PRECURSORTYPE: " + rawData.PrecursorType);
+                sw.WriteLine("IONMODE: " + rawData.IonMode);
+                sw.WriteLine("SPECTRUMTYPE: " + rawData.SpectrumType);
+                sw.WriteLine("FORMULA: " + rawData.Formula);
+                sw.WriteLine("INCHIKEY: " + rawData.InchiKey);
+                sw.WriteLine("INCHI: " + rawData.Inchi);
+                sw.WriteLine("SMILES: " + rawData.Smiles);
+                sw.WriteLine("AUTHORS: " + rawData.Authors);
+                sw.WriteLine("COLLISIONENERGY: " + rawData.CollisionEnergy);
+                sw.WriteLine("INSTRUMENT: " + rawData.Instrument);
+                sw.WriteLine("INSTRUMENTTYPE: " + rawData.InstrumentType);
+                sw.WriteLine("IONIZATION: " + rawData.Ionization);
+                sw.WriteLine("LICENSE: " + rawData.License);
+                sw.WriteLine("COMMENT: " + rawData.Comment);
 
-            var spectra = rawData.Ms2Spectrum.PeakList.OrderBy(n => n.Mz).ToList();
-            var maxIntensity = spectra.Max(n => n.Intensity);
-            var spectraList = new List<string>();
-            var ms2Peaklist = FragmentAssigner.GetCentroidMsMsSpectrum(rawData);
-            //var commentList = FragmentAssigner.IsotopicPeakAssignmentForComment(ms2Peaklist, param.Mass2Tolerance, param.MassTolType);
-            for (int i = 0; i < rawData.Ms2PeakNumber; i++)
-            {
-                var mz = spectra[i].Mz;
-                var intensity = spectra[i].Intensity;
-                if (intensity / maxIntensity * 100 < param.RelativeAbundanceCutOff) continue;
-                var comment = "";
+                var spectra = rawData.Ms2Spectrum.PeakList.OrderBy(n => n.Mz).ToList();
+                var maxIntensity = spectra.Max(n => n.Intensity);
+                var spectraList = new List<string>();
+                var ms2Peaklist = FragmentAssigner.GetCentroidMsMsSpectrum(rawData);
+                //var commentList = FragmentAssigner.IsotopicPeakAssignmentForComment(ms2Peaklist, param.Mass2Tolerance, param.MassTolType);
+                for (int i = 0; i < rawData.Ms2PeakNumber; i++)
+                {
+                    var mz = spectra[i].Mz;
+                    var intensity = spectra[i].Intensity;
+                    if (intensity / maxIntensity * 100 < param.RelativeAbundanceCutOff) continue;
+                    var comment = "";
 
-                var originalComment = spectra[i].Comment;
-                var additionalComment = getProductIonComment(mz, formulaResults, sfdResults, rawData.IonMode);
-                if (originalComment != "")
-                    comment = originalComment + "; " + additionalComment;
-                else
-                    comment = additionalComment;
+                    var originalComment = spectra[i].Comment;
+                    var additionalComment = getProductIonComment(mz, formulaResults, sfdResults, rawData.IonMode);
+                    if (originalComment != "")
+                        comment = originalComment + "; " + additionalComment;
+                    else
+                        comment = additionalComment;
 
-                var peakString = string.Empty;
-                if (comment == string.Empty)
-                    peakString = Math.Round(mz, 5) + "\t" + intensity;
-                else
-                    peakString = Math.Round(mz, 5) + "\t" + intensity + "\t" + "\"" + comment + "\"";
+                    var peakString = string.Empty;
+                    if (comment == string.Empty)
+                        peakString = Math.Round(mz, 5) + "\t" + intensity;
+                    else
+                        peakString = Math.Round(mz, 5) + "\t" + intensity + "\t" + "\"" + comment + "\"";
 
-                spectraList.Add(peakString);
+                    spectraList.Add(peakString);
+                }
+                sw.WriteLine("Num Peaks: " + spectraList.Count);
+                for (int i = 0; i < spectraList.Count; i++)
+                    sw.WriteLine(spectraList[i]);
+
+                sw.WriteLine();
             }
-            sw.WriteLine("Num Peaks: " + spectraList.Count);
-            for (int i = 0; i < spectraList.Count; i++)
-                sw.WriteLine(spectraList[i]);
-
-            sw.WriteLine();
         }
 
         private static string getProductIonComment(double mz, List<FormulaResult> formulaResults, List<FragmenterResult> sfdResults, IonMode ionMode) {

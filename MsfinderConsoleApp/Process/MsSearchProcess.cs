@@ -12,14 +12,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
-    public class MsSearchProcess {
+namespace Riken.Metabolomics.MsfinderConsoleApp.Process
+{
+    public class MsSearchProcess
+    {
         private ObservableCollection<MsfinderQueryFile> queryFiles;
         private AnalysisParamOfMsfinder param;
         private List<MspFormatCompoundInformationBean> mspDB;
         private string outputfile;
 
-        public int Run(string input, string methodFile, string outputfolder) {
+        public int Run(string input, string methodFile, string outputfolder)
+        {
 
             Console.WriteLine("Loading library files..");
 
@@ -29,7 +32,8 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             else if (Directory.Exists(input))
                 this.queryFiles = FileStorageUtility.GetAnalysisFileBeanCollection(input);
 
-            if (this.queryFiles == null || this.queryFiles.Count == 0) {
+            if (this.queryFiles == null || this.queryFiles.Count == 0)
+            {
                 Console.WriteLine("The program cannot find any query file in your input folder.");
                 return -1;
             }
@@ -44,7 +48,8 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
 
             //working space prep...
             workSpacePreparation();
-            if (this.mspDB == null || this.mspDB.Count == 0) {
+            if (this.mspDB == null || this.mspDB.Count == 0)
+            {
                 Console.WriteLine("No information in MSP spectral DB.");
                 return -1;
             }
@@ -53,7 +58,8 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             return executeProcess();
         }
 
-        private int executeProcess() {
+        private int executeProcess()
+        {
 
             var syncObj = new object();
             var queryCount = this.queryFiles.Count;
@@ -62,7 +68,8 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             var progress = 0;
             var error = string.Empty;
 
-            Parallel.ForEach(this.queryFiles, file => {
+            Parallel.ForEach(this.queryFiles, file =>
+            {
                 var rawData = RawDataParcer.RawDataFileReader(file.RawDataFilePath, this.param);
                 var formulaResults = new List<FormulaResult>() {
                     new FormulaResult(){
@@ -72,14 +79,17 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
                     }
                 };
 
-                lock (syncObj) {
+                lock (syncObj)
+                {
                     progress++;
                     FormulaResultParcer.FormulaResultsWriter(file.FormulaFilePath, formulaResults);
-                    if (!Console.IsOutputRedirected) {
+                    if (!Console.IsOutputRedirected)
+                    {
                         Console.Write("Working space preparation finished: {0} / {1}", progress, queryCount);
                         Console.SetCursorPosition(0, Console.CursorTop);
                     }
-                    else {
+                    else
+                    {
                         Console.WriteLine("Working space preparation finished: {0} / {1}", progress, queryCount);
                     }
                 }
@@ -88,36 +98,47 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
 
             //structure predictions
             progress = 0;
-            Parallel.ForEach(this.queryFiles, file => {
+            Parallel.ForEach(this.queryFiles, file =>
+            {
 
-                var rawData = RawDataParcer.RawDataFileReader(file.RawDataFilePath, param);
-                var structureFiles = System.IO.Directory.GetFiles(file.StructureFolderPath, "*.sfd");
-                if (structureFiles.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFiles);
+                var rawDataList = RawDataParcer.RawDataFileReader(file.RawDataFilePath, param);
+                foreach (var rawData in rawDataList)
+                {
+                    var structureFiles = System.IO.Directory.GetFiles(file.StructureFolderPath, "*.sfd");
+                    if (structureFiles.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFiles);
 
-                if (System.IO.File.Exists(file.FormulaFilePath)) {
-                    var formulaResults = FormulaResultParcer.FormulaResultReader(file.FormulaFilePath, out error);
-                    if (error != string.Empty) {
-                        Console.WriteLine(error);
-                    }
+                    if (System.IO.File.Exists(file.FormulaFilePath))
+                    {
+                        var formulaResults = FormulaResultParcer.FormulaResultReader(file.FormulaFilePath, out error);
+                        if (error != string.Empty)
+                        {
+                            Console.WriteLine(error);
+                        }
 
-                    if (formulaResults != null && formulaResults.Count != 0) {
-                        foreach (var formula in formulaResults.Where(f => f.IsSelected).ToList()) {
-                            var exportFilePath = FileStorageUtility.GetStructureDataFilePath(file.StructureFolderPath, formula.Formula.FormulaString);
-                            var finder = new MsfinderStructureFinder();
-                            finder.StructureFinderMainProcess(rawData, formula, this.param, exportFilePath, 
-                                null, null, null, null, null, this.mspDB);
+                        if (formulaResults != null && formulaResults.Count != 0)
+                        {
+                            foreach (var formula in formulaResults.Where(f => f.IsSelected).ToList())
+                            {
+                                var exportFilePath = FileStorageUtility.GetStructureDataFilePath(file.StructureFolderPath, formula.Formula.FormulaString);
+                                var finder = new MsfinderStructureFinder();
+                                finder.StructureFinderMainProcess(rawData, formula, this.param, exportFilePath,
+                                    null, null, null, null, null, this.mspDB);
+                            }
                         }
                     }
-                }
 
-                lock (syncObj) {
-                    progress++;
-                    if (!Console.IsOutputRedirected) {
-                        Console.Write("MS search finished: {0} / {1}", progress, queryCount);
-                        Console.SetCursorPosition(0, Console.CursorTop);
-                    }
-                    else {
-                        Console.WriteLine("MS search finished: {0} / {1}", progress, queryCount);
+                    lock (syncObj)
+                    {
+                        progress++;
+                        if (!Console.IsOutputRedirected)
+                        {
+                            Console.Write("MS search finished: {0} / {1}", progress, queryCount);
+                            Console.SetCursorPosition(0, Console.CursorTop);
+                        }
+                        else
+                        {
+                            Console.WriteLine("MS search finished: {0} / {1}", progress, queryCount);
+                        }
                     }
                 }
             });
@@ -125,35 +146,44 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
 
             Console.WriteLine("Writing MS search results...");
             progress = 0;
-            using (var sw = new StreamWriter(this.outputfile, false, Encoding.ASCII)) {
+            using (var sw = new StreamWriter(this.outputfile, false, Encoding.ASCII))
+            {
                 sw.WriteLine("File path\tFile name\tMS1 count\tMSMS count\t" +
                     "Precursor mz\tPrecursor type\tRank\tInChIKey\tSMILES\tTotal score");
 
-                foreach (var rawfile in this.queryFiles) {
-                    var rawData = RawDataParcer.RawDataFileReader(rawfile.RawDataFilePath, param);
-                    var formulaResults = FormulaResultParcer.FormulaResultReader(rawfile.FormulaFilePath, out error);
-                    if (error != string.Empty) {
-                        Console.WriteLine(error);
-                    }
+                foreach (var rawfile in this.queryFiles)
+                {
+                    var rawDataList = RawDataParcer.RawDataFileReader(rawfile.RawDataFilePath, param);
+                    foreach (var rawData in rawDataList)
+                    {
+                        var formulaResults = FormulaResultParcer.FormulaResultReader(rawfile.FormulaFilePath, out error);
+                        if (error != string.Empty)
+                        {
+                            Console.WriteLine(error);
+                        }
 
-                    formulaResults = formulaResults.OrderByDescending(n => n.TotalScore).ToList();
-                    var sfdFiles = System.IO.Directory.GetFiles(rawfile.StructureFolderPath);
-                    var sfdResults = new List<FragmenterResult>();
+                        formulaResults = formulaResults.OrderByDescending(n => n.TotalScore).ToList();
+                        var sfdFiles = System.IO.Directory.GetFiles(rawfile.StructureFolderPath);
+                        var sfdResults = new List<FragmenterResult>();
 
-                    foreach (var sfdFile in sfdFiles) {
-                        var sfdResult = FragmenterResultParcer.FragmenterResultReader(sfdFile);
-                        sfdResultMerge(sfdResults, sfdResult);
-                    }
-                    sfdResults = sfdResults.OrderByDescending(n => n.TotalScore).ToList();
-                    writeStructureResult(sw, rawData, sfdResults);
+                        foreach (var sfdFile in sfdFiles)
+                        {
+                            var sfdResult = FragmenterResultParcer.FragmenterResultReader(sfdFile);
+                            sfdResultMerge(sfdResults, sfdResult);
+                        }
+                        sfdResults = sfdResults.OrderByDescending(n => n.TotalScore).ToList();
+                        writeStructureResult(sw, rawData, sfdResults);
 
-                    progress++;
-                    if (!Console.IsOutputRedirected) {
-                        Console.Write("Writing structure prediction result finished: {0} / {1}", progress, queryCount);
-                        Console.SetCursorPosition(0, Console.CursorTop);
-                    }
-                    else {
-                        Console.WriteLine("Writing structure prediction result finished: {0} / {1}", progress, queryCount);
+                        progress++;
+                        if (!Console.IsOutputRedirected)
+                        {
+                            Console.Write("Writing structure prediction result finished: {0} / {1}", progress, queryCount);
+                            Console.SetCursorPosition(0, Console.CursorTop);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Writing structure prediction result finished: {0} / {1}", progress, queryCount);
+                        }
                     }
                 }
             }
@@ -162,13 +192,15 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             return 1;
         }
 
-        private void writeStructureResult(StreamWriter sw, Rfx.Riken.OsakaUniv.RawData rawData, 
-            List<FragmenterResult> sfdResults) {
+        private void writeStructureResult(StreamWriter sw, Rfx.Riken.OsakaUniv.RawData rawData,
+            List<FragmenterResult> sfdResults)
+        {
             var filepath = rawData.RawdataFilePath;
             var filename = System.IO.Path.GetFileNameWithoutExtension(rawData.RawdataFilePath);
             var counter = 1;
 
-            foreach (var result in sfdResults) {
+            foreach (var result in sfdResults)
+            {
 
                 if (result.TotalScore <= 0) continue;
 
@@ -188,26 +220,32 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             }
         }
 
-        private static void sfdResultMerge(List<FragmenterResult> mergedList, List<FragmenterResult> results) {
+        private static void sfdResultMerge(List<FragmenterResult> mergedList, List<FragmenterResult> results)
+        {
             if (results == null || results.Count == 0) return;
 
-            foreach (var result in results) {
+            foreach (var result in results)
+            {
                 mergedList.Add(result);
             }
         }
 
-        private void workSpacePreparation() {
+        private void workSpacePreparation()
+        {
             var errorMessage = string.Empty;
             this.mspDB = FileStorageUtility.GetMspDB(param, out errorMessage);
             if (errorMessage != string.Empty)
                 Console.WriteLine(errorMessage);
         }
 
-        private ObservableCollection<MsfinderQueryFile> getQueryFilesFromMultipleFolders(string input) {
+        private ObservableCollection<MsfinderQueryFile> getQueryFilesFromMultipleFolders(string input)
+        {
             var folders = new List<string>();
-            using (var sr = new StreamReader(input, Encoding.ASCII)) {
+            using (var sr = new StreamReader(input, Encoding.ASCII))
+            {
 
-                while (sr.Peek() > -1) {
+                while (sr.Peek() > -1)
+                {
                     var line = sr.ReadLine();
                     if (line == string.Empty) break;
                     folders.Add(line);
@@ -215,7 +253,8 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             }
 
             var masterQueries = new ObservableCollection<MsfinderQueryFile>();
-            foreach (var folder in folders) {
+            foreach (var folder in folders)
+            {
                 var queries = FileStorageUtility.GetAnalysisFileBeanCollection(folder);
                 foreach (var query in queries)
                     masterQueries.Add(query);

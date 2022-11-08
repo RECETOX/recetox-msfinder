@@ -103,15 +103,16 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             Parallel.ForEach(this.queryFiles, file => {
                 var rawDataFilePath = file.RawDataFilePath;
                 var formulaFilePath = file.FormulaFilePath;
-                var rawData = RawDataParcer.RawDataFileReader(file.RawDataFilePath, param);
+                var rawDataList = RawDataParcer.RawDataFileReader(file.RawDataFilePath, param);
 
-                if (rawData.Formula == null || rawData.Formula == string.Empty || rawData.Smiles == null || rawData.Smiles == string.Empty) return;
+                foreach(var rawData in rawDataList){
+                    if (rawData.Formula == null || rawData.Formula == string.Empty || rawData.Smiles == null || rawData.Smiles == string.Empty) return;
 
-                if (param.IsUseEiFragmentDB)
-                    PeakAssigner.Process(file, rawData, param, productIonDB, neutralLossDB, existFormulaDB, eiFragmentDB, fragmentOntologyDB);
-                else
-                    PeakAssigner.Process(file, rawData, param, productIonDB, neutralLossDB, existFormulaDB, null, fragmentOntologyDB);
-
+                    if (param.IsUseEiFragmentDB)
+                        PeakAssigner.Process(file, rawData, param, productIonDB, neutralLossDB, existFormulaDB, eiFragmentDB, fragmentOntologyDB);
+                    else
+                        PeakAssigner.Process(file, rawData, param, productIonDB, neutralLossDB, existFormulaDB, null, fragmentOntologyDB);
+                }
                 lock (syncObj) {
                     progress++;
                     if (!Console.IsOutputRedirected) {

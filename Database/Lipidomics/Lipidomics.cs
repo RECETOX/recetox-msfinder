@@ -60,7 +60,7 @@ namespace Riken.Metabolomics.Lipidomics {
         private LipidAnnotation() { }
 
         // test query spectrum
-        public static Rfx.Riken.OsakaUniv.RawData ReadTestSpectrum(string input) {
+        public static List<Rfx.Riken.OsakaUniv.RawData> ReadTestSpectrum(string input) {
             return RawDataParcer.RawDataFileReader(input, new AnalysisParamOfMsfinder());
         }
 
