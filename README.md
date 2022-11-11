@@ -32,13 +32,15 @@ dotnet build .\MsfinderConsoleApp\
 # Usage
 ## Running MsFinder:
 
-Required args:
--i input folder/file to be processed
--m method file holding processing properties
--o output folder to save results
+###### Required args:
+| -i input folder/file to be processed |
+| -m method file holding processing properties |
+| -o output folder to save results |
 
-example: MsfinderConsoleApp.exe annotate -i <input folder> -m <method file> -o <output file>
+**example:** 
 ```
+MsfinderConsoleApp.exe annotate -i <input folder> -m <method file> -o <output file>
+
 MsfinderConsoleApp.exe annotate -i test.msp -m MSFINDER.INI -o out.msp
 ```
 
