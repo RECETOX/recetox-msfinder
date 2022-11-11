@@ -32,6 +32,43 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             return sb.ToString();
         }
 
+        private static void setFormulaStructPath(ObservableCollection<MsfinderQueryFile> analysisFileBeanCollection, string folderPath){
+            foreach (var file in analysisFileBeanCollection) {
+                var formulaFilePath = folderPath + "/" + file.RawDataFileName + "." + SaveFileFormat.fgt;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                    formulaFilePath = folderPath + "\\" + file.RawDataFileName + "." + SaveFileFormat.fgt;
+                }
+                file.FormulaFilePath = formulaFilePath;
+                file.FormulaFileName = file.RawDataFileName;
+
+                file.StructureFolderPath = folderPath + "/" + file.RawDataFileName;
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                    file.StructureFolderPath = folderPath + "\\" + file.RawDataFileName;
+                }
+                file.StructureFolderName = file.RawDataFileName;
+
+                if (!System.IO.Directory.Exists(file.StructureFolderPath)) {
+                    var di = System.IO.Directory.CreateDirectory(file.StructureFolderPath);
+                }
+            }
+        }
+
+        public static ObservableCollection<MsfinderQueryFile> GetSingleAnalysisFileBeanCollection(string importFolderPath) {
+            ObservableCollection<MsfinderQueryFile> analysisFileBeanCollection = new ObservableCollection<MsfinderQueryFile>();
+
+            if (!File.Exists(importFolderPath)) return null;
+
+            var analysisFileBean = new MsfinderQueryFile() { RawDataFilePath = importFolderPath, RawDataFileName = System.IO.Path.GetFileNameWithoutExtension(importFolderPath) };
+
+            analysisFileBeanCollection.Add(analysisFileBean);
+
+            var folderPath = System.IO.Path.GetDirectoryName(importFolderPath);
+            // set formula files and structure folder paths
+            setFormulaStructPath(analysisFileBeanCollection, folderPath);
+
+            return analysisFileBeanCollection;
+        }
+
         public static ObservableCollection<MsfinderQueryFile> GetAnalysisFileBeanCollection(string importFolderPath) {
             ObservableCollection<MsfinderQueryFile> analysisFileBeanCollection = new ObservableCollection<MsfinderQueryFile>();
 
@@ -55,24 +92,8 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             //}
 
             // set formula files and structure folder paths
-            foreach (var file in analysisFileBeanCollection) {
-                var formulaFilePath = importFolderPath + "/" + file.RawDataFileName + "." + SaveFileFormat.fgt;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
-                    formulaFilePath = importFolderPath + "\\" + file.RawDataFileName + "." + SaveFileFormat.fgt;
-                }
-                file.FormulaFilePath = formulaFilePath;
-                file.FormulaFileName = file.RawDataFileName;
+            setFormulaStructPath(analysisFileBeanCollection, importFolderPath);
 
-                file.StructureFolderPath = importFolderPath + "/" + file.RawDataFileName;
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
-                    file.StructureFolderPath = importFolderPath + "\\" + file.RawDataFileName;
-                }
-                file.StructureFolderName = file.RawDataFileName;
-
-                if (!System.IO.Directory.Exists(file.StructureFolderPath)) {
-                    var di = System.IO.Directory.CreateDirectory(file.StructureFolderPath);
-                }
-            }
             return analysisFileBeanCollection;
         }
 
@@ -462,7 +483,11 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
         {
             using (var sw = new StreamWriter(exportFilePath, false, Encoding.ASCII))
             {
-                var files = FileStorageUtility.GetAnalysisFileBeanCollection(input);
+                var files =  FileStorageUtility.GetAnalysisFileBeanCollection(input);
+                if (File.Exists(input))
+                    files = FileStorageUtility.GetSingleAnalysisFileBeanCollection(input);
+                    
+                ///var files = FileStorageUtility.GetAnalysisFileBeanCollection(input);
                 //var files = queryFiles;
                 //var param = mainWindowVM.DataStorageBean.AnalysisParameter;
                 var error = string.Empty;
