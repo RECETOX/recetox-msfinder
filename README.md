@@ -32,10 +32,11 @@ dotnet build .\MsfinderConsoleApp\
 # Usage
 ## Running MsFinder:
 
-###### Required args:
-| -i input folder/file to be processed |
-| -m method file holding processing properties |
-| -o output folder to save results |
+**Required args:**
+| ------------- | ------------- |
+| -i | input folder/file to be processed |
+| -m | method file holding processing properties |
+| -o | output folder to save results |
 
 **example:** 
 ```
