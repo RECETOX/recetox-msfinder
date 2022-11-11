@@ -33,6 +33,7 @@ dotnet build .\MsfinderConsoleApp\
 ## Running MsFinder:
 
 **Required args:**
+| Args | Description |
 | ------------- | ------------- |
 | -i | input folder/file to be processed |
 | -m | method file holding processing properties |
