@@ -13,8 +13,34 @@ Lead developer: Hiroshi Tsugawa (RIKEN)
 Current main developers: Hiroshi Tsugawa (RIKEN), Ipputa Tada (SOKENDAI), and Yuki Matsuzawa (RIKEN)
 Past developers: Diego Pedrosa (UC Davis)
 
+# Requirements:
+- .net framework 4.8
+- nuget.exe (https://www.nuget.org/downloads)
+
+# Installation:
+Clone the github directory
+```
+git clone https://github.com/RECETOX/recetox-msfinder.git
+```
+
+From the project root run 
+```
+nuget.exe restore
+dotnet build .\MsfinderConsoleApp\ 
+```
+
 # Usage
-See the tutorial page: https://mtbinfo-team.github.io/mtbinfo.github.io/
+## Running MsFinder:
+
+Required args:
+-i input folder/file to be processed
+-m method file holding processing properties
+-o output folder to save results
+
+example: MsfinderConsoleApp.exe annotate -i <input folder> -m <method file> -o <output file>
+```
+MsfinderConsoleApp.exe annotate -i test.msp -m MSFINDER.INI -o out.msp
+```
 
 # About LBM file in MS-DIAL project
 The LBM (*.LBM2) file contains the in silico MS/MS spectra of lipids.
