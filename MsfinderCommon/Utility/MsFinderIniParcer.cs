@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace Riken.Metabolomics.MsfinderCommon.Utility {
     public sealed class MsFinderIniParcer {
@@ -22,7 +23,10 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             if (!System.IO.File.Exists(iniPath)) { Write(param); }
 
             //var iniLipidPath = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\LipidQueries.INI";
-            var iniLipidPath = Directory.GetCurrentDirectory() + "\\LipidQueries.INI";
+            var iniLipidPath = Directory.GetCurrentDirectory() + "/LipidQueries.INI";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                iniLipidPath = Directory.GetCurrentDirectory() + "\\LipidQueries.INI";
+            }
             if (!System.IO.File.Exists(iniLipidPath)) { WriteLipidINI(param); }
 
             using (var sr = new StreamReader(iniPath, Encoding.ASCII)) {
@@ -815,7 +819,13 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
         public static void WriteLipidINI(AnalysisParamOfMsfinder param, string output = "") {
             if (output == "") {
                 //output = System.IO.Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath) + "\\LipidQueries.INI";
-                output = Directory.GetCurrentDirectory() + "\\LipidQueries.INI";
+                //output = Directory.GetCurrentDirectory() + "\\LipidQueries.INI";
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
+                    output = Directory.GetCurrentDirectory() + "\\LipidQueries.INI";
+                }
+                else{
+                    output = Directory.GetCurrentDirectory() + "/LipidQueries.INI";
+                }
             }
 
             using (StreamWriter sw = new StreamWriter(output, false, Encoding.ASCII)) {
