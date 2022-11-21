@@ -25,10 +25,10 @@ namespace Rfx.Riken.OsakaUniv {
 
             errorString = string.Empty;
  
-            if (ErrorHandler.IsFileLocked(file, out errorString)){
-                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
+//            if (ErrorHandler.IsFileLocked(file, out errorString)){
+//                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+//                return null;
+//            }
 
             using (StreamReader sr = new StreamReader(file, Encoding.ASCII)) {
                 var header = sr.ReadLine();

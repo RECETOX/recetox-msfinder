@@ -17,10 +17,10 @@ namespace Rfx.Riken.OsakaUniv
             double mass;
             errorString = string.Empty;
 
-            if (ErrorHandler.IsFileLocked(dbFilePath, out errorString)) {
-                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
+//            if (ErrorHandler.IsFileLocked(dbFilePath, out errorString)) {
+//                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+//                return null;
+//            }
 
             using (StreamReader sr = new StreamReader(dbFilePath, Encoding.ASCII)) {
                 sr.ReadLine();
@@ -67,10 +67,10 @@ namespace Rfx.Riken.OsakaUniv
             double mass;
             errorString = string.Empty;
 
-            if (ErrorHandler.IsFileLocked(dbFilePath, out errorString)) {
-                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
+//            if (ErrorHandler.IsFileLocked(dbFilePath, out errorString)) {
+//                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+//                return null;
+//            }
 
             using (StreamReader sr = new StreamReader(dbFilePath, Encoding.ASCII))
             {
@@ -120,10 +120,10 @@ namespace Rfx.Riken.OsakaUniv
             var uniqueFragmentDB = new List<FragmentOntology>();
             errorString = string.Empty;
 
-            if (ErrorHandler.IsFileLocked(dbFilePath, out errorString)) {
-                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return null;
-            }
+//            if (ErrorHandler.IsFileLocked(dbFilePath, out errorString)) {
+//                //MessageBox.Show(errorString, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+//                return null;
+//            }
 
             using (StreamReader sr = new StreamReader(dbFilePath, Encoding.ASCII)) {
                 sr.ReadLine();
