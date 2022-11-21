@@ -53,7 +53,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             }
         }
 
-        public static ObservableCollection<MsfinderQueryFile> GetSingleAnalysisFileBeanCollection(string importFolderPath) {
+        public static ObservableCollection<MsfinderQueryFile> GetSingleAnalysisFileBeanCollection(string importFolderPath, string exportFilePath) {
             ObservableCollection<MsfinderQueryFile> analysisFileBeanCollection = new ObservableCollection<MsfinderQueryFile>();
 
             if (!File.Exists(importFolderPath)) return null;
@@ -62,7 +62,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
 
             analysisFileBeanCollection.Add(analysisFileBean);
 
-            var folderPath = System.IO.Path.GetDirectoryName(importFolderPath);
+            var folderPath = System.IO.Path.GetDirectoryName(exportFilePath);
             // set formula files and structure folder paths
             setFormulaStructPath(analysisFileBeanCollection, folderPath);
 
@@ -485,7 +485,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             {
                 var files =  FileStorageUtility.GetAnalysisFileBeanCollection(input);
                 if (File.Exists(input))
-                    files = FileStorageUtility.GetSingleAnalysisFileBeanCollection(input);
+                    files = FileStorageUtility.GetSingleAnalysisFileBeanCollection(input, exportFilePath);
                     
                 ///var files = FileStorageUtility.GetAnalysisFileBeanCollection(input);
                 //var files = queryFiles;

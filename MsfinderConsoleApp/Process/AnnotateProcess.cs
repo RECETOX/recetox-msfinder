@@ -39,7 +39,7 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
 
             //read query files and param
             if (File.Exists(input))
-                this.queryFiles = FileStorageUtility.GetSingleAnalysisFileBeanCollection(input);
+                this.queryFiles = FileStorageUtility.GetSingleAnalysisFileBeanCollection(input, outputfolder);
             else if (Directory.Exists(input))
                 this.queryFiles = FileStorageUtility.GetAnalysisFileBeanCollection(input);
 
