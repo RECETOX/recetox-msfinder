@@ -1,12 +1,11 @@
-# MsdialWorkbench contents
+# DISCLAIMER
+This is a modified copy of MS-FINDER with source code modifications to make the tool accessible in [Galaxy](https://umsa.cerit-sc.cz/root?tool_id=toolshed.g2.bx.psu.edu/repos/recetox/recetox_msfinder/recetox_msfinder/3.5.2+galaxy0).
 
-# MS-DIAL - software for untargeted metabolomics and lipidomics
-The program supports data processings for any type of chromatography / scan type mass spectrometry data, and the assembly is licensed under the CC-BY 4.0.
-Please contact Hiroshi Tsugawa (hiroshi.tsugawa@riken.jp) for feedback, bug reports, and questions.
+The remaining content of this README file remained unmodified.
 
 # MS-FINDER - software for structure elucidation of unknown spectra with hydrogen rearrangement (HR) rules
 The program supports molecular formula prediction, metabolie class prediction, and structure elucidation for EI-MS and MS/MS spectra, and the assembly is licensed under the CC-BY 4.0.
-Please contact Hiroshi Tsugawa (hiroshi.tsugawa@riken.jp) for feedback, bug reports, and questions.
+Please contact Hiroshi Tsugawa (hiroshi.tsugawa@riken.jp) for feedback, bug reports, and questions or create an issue on this GitHub [repository](https://github.com/RECETOX/recetox-msfinder).
 
 # Developers
 Lead developer: Hiroshi Tsugawa (RIKEN) 
