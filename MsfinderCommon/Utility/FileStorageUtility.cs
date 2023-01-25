@@ -510,7 +510,11 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                         sfdResultMerge(sfdResults, sfdResult, formulaString);
                     }
                     //sfdResults = sfdResults.OrderByDescending(n => n.TotalScore).ToList();
-                    writeResultAsMsp(sw, rawData, formulaResults, sfdResults, param);
+                    
+                    if (rawData.Count == formulaResults.Count && rawData.Count == sfdResults.Count)
+                    {
+                        writeResultAsMsp(sw, rawData, formulaResults, sfdResults, param);
+                    }
                 }
             }
         }
