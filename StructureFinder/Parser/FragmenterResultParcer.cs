@@ -337,7 +337,7 @@ namespace Riken.Metabolomics.StructureFinder.Parser
 
                 fragmenterResults.Add(result);
             }
-            return fragmenterResults.OrderByDescending(n => n.TotalScore).ToList();
+            return fragmenterResults;//.OrderByDescending(n => n.TotalScore).ToList();
         }
 
         /// <summary>

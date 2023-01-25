@@ -89,6 +89,15 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             #endregion
 
             Console.WriteLine("Start processing..");
+
+            foreach(var file in this.queryFiles){
+                var structureFile = System.IO.Directory.GetFiles(file.StructureFolderPath, "*.sfd");
+                if (structureFile.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFile);
+
+                var formulaFile = System.IO.Directory.GetFiles(Path.GetDirectoryName(file.FormulaFilePath), $"{file.FormulaFileName}.fgt");
+                if (formulaFile.Length > 0) FileStorageUtility.DeleteSfdFiles(formulaFile);
+            }
+
             executeProcess();
             FileStorageUtility.PeakAnnotationResultExportAsMsp(input, this.param, outputfolder);
             return 1;
@@ -100,13 +109,13 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
 
             var progress = 0;
 
-            Parallel.ForEach(this.queryFiles, file => {
+            foreach(var file in this.queryFiles){
                 var rawDataFilePath = file.RawDataFilePath;
                 var formulaFilePath = file.FormulaFilePath;
                 var rawDataList = RawDataParcer.RawDataFileReader(file.RawDataFilePath, param);
 
                 foreach(var rawData in rawDataList){
-                    if (rawData.Formula == null || rawData.Formula == string.Empty || rawData.Smiles == null || rawData.Smiles == string.Empty) return;
+                    if (rawData.Formula == null || rawData.Formula == string.Empty || rawData.Smiles == null || rawData.Smiles == string.Empty) return 1;
 
                     if (param.IsUseEiFragmentDB)
                         PeakAssigner.Process(file, rawData, param, productIonDB, neutralLossDB, existFormulaDB, eiFragmentDB, fragmentOntologyDB);
@@ -123,7 +132,7 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
                         Console.WriteLine("Fragment annotation finished: {0} / {1}", progress, queryCount);
                     }
                 }
-            });
+            }
             return 1;
         }
 

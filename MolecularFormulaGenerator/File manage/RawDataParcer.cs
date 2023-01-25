@@ -36,7 +36,8 @@ namespace Rfx.Riken.OsakaUniv
                 double rt;
                 if (double.TryParse(wkstr.Split(':')[1].Trim(), out rt)) rawData.RetentionIndex = rt; else rawData.RetentionIndex = -1;
             }
-            else if (Regex.IsMatch(wkstr, "PRECURSORMZ:", RegexOptions.IgnoreCase))
+            else if (Regex.IsMatch(wkstr, "PRECURSORMZ:", RegexOptions.IgnoreCase) ||
+                     Regex.IsMatch(wkstr, "MW:", RegexOptions.IgnoreCase))
             {
                 double mz;
                 if (double.TryParse(wkstr.Split(':')[1].Trim(), out mz)) rawData.PrecursorMz = mz;
@@ -255,8 +256,11 @@ namespace Rfx.Riken.OsakaUniv
                     wkstr = sr.ReadLine();
                     if (string.IsNullOrEmpty(wkstr))
                     {
-                        rawDataList.Add(rawData);
-                        rawData = new RawData(){ RawdataFilePath = filePath };
+                        if (rawData.Name != null)
+                        {
+                            rawDataList.Add(rawData);
+                            rawData = new RawData(){ RawdataFilePath = filePath };
+                        }
                         continue;
                     }
                     #region parcer

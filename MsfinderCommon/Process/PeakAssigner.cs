@@ -25,17 +25,17 @@ namespace Riken.Metabolomics.MsfinderCommon.Process
             var formualResults = new List<FormulaResult>() { formulaResult };
             FormulaResultParcer.FormulaResultsWriter(analysisFile.FormulaFilePath, formualResults);
 
-            var structureFiles = System.IO.Directory.GetFiles(analysisFile.StructureFolderPath, "*.sfd");
-            if (structureFiles.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFiles);
+            //var structureFiles = System.IO.Directory.GetFiles(analysisFile.StructureFolderPath, "*.sfd");
+            //if (structureFiles.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFiles);
 
-            var exportStructureFilePath = FileStorageUtility.GetStructureDataFilePath(analysisFile.StructureFolderPath, formulaResult.Formula.FormulaString);
+            var exportStructureFilePath = FileStorageUtility.GetStructureDataFilePath(analysisFile.StructureFolderPath, analysisFile.RawDataFileName);
             if (rawData.Ms2PeakNumber <= 0 || rawData.Smiles == null || rawData.Smiles == string.Empty) return;
             
             var structureQuery = new ExistStructureQuery(rawData.Name, rawData.InchiKey, rawData.InchiKey, new List<int>(), formulaResult.Formula, rawData.Smiles, string.Empty, 0, new DatabaseQuery());
             if (structureQuery == null) return;
 
             var eQueries = new List<ExistStructureQuery>() { structureQuery };
-            System.IO.File.Create(exportStructureFilePath).Close();
+            //System.IO.File.Create(exportStructureFilePath).Close();
 
             var adductIon = AdductIonParcer.GetAdductIonBean(rawData.PrecursorType);
             var centroidSpectrum = FragmentAssigner.GetCentroidMsMsSpectrum(rawData);
