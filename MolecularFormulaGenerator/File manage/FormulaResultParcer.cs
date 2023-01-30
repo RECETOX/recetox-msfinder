@@ -33,9 +33,14 @@ namespace Rfx.Riken.OsakaUniv
                 var versionNum = 1;
                 var isHeaderChecked = false;
                
-                while (sr.Peek() > -1)
+                while (!sr.EndOfStream)
                 {
                     wkstr = sr.ReadLine();
+
+                    if (string.IsNullOrEmpty(wkstr))
+                    {
+                        continue;
+                    }
 
                     if (isHeaderChecked == false) {
                         if (wkstr.Contains("Version:")) {
@@ -508,7 +513,7 @@ namespace Rfx.Riken.OsakaUniv
         /// <param name="results">Add the list of formularesult</param>
         public static void FormulaResultsWriter(string filePath, List<FormulaResult> results)
         {
-            using (var sw = new StreamWriter(filePath, false, Encoding.ASCII))
+            using (var sw = new StreamWriter(filePath, true, Encoding.ASCII))
             {
                 sw.WriteLine("Version: 2");
                 foreach (var result in results) { formulaStreamWriter(sw, result); }

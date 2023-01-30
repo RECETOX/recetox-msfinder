@@ -495,7 +495,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                 foreach (var rawfile in files)
                 {
                     var rawData = RawDataParcer.RawDataFileReader(rawfile.RawDataFilePath, param);
-                    var formulaResults = FormulaResultParcer.FormulaResultReader(rawfile.FormulaFilePath, out error).OrderByDescending(n => n.TotalScore).ToList();
+                    var formulaResults = FormulaResultParcer.FormulaResultReader(rawfile.FormulaFilePath, out error); //.OrderByDescending(n => n.TotalScore).ToList();
                     if (error != string.Empty) {
                         Console.WriteLine(error);
                     }
@@ -509,40 +509,44 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                         var formulaString = System.IO.Path.GetFileNameWithoutExtension(sfdFile);
                         sfdResultMerge(sfdResults, sfdResult, formulaString);
                     }
-                    sfdResults = sfdResults.OrderByDescending(n => n.TotalScore).ToList();
-                    writeResultAsMsp(sw, rawData, formulaResults, sfdResults, param);
+                    //sfdResults = sfdResults.OrderByDescending(n => n.TotalScore).ToList();
+                    
+                    if (rawData.Count == formulaResults.Count && rawData.Count == sfdResults.Count)
+                    {
+                        writeResultAsMsp(sw, rawData, formulaResults, sfdResults, param);
+                    }
                 }
             }
         }
 
         private static void writeResultAsMsp(StreamWriter sw, List<Rfx.Riken.OsakaUniv.RawData> rawDataList, List<FormulaResult> formulaResults, List<FragmenterResult> sfdResults, AnalysisParamOfMsfinder param) {
-            foreach (var rawData in rawDataList) {
-                sw.WriteLine("NAME: " + rawData.Name);
-                sw.WriteLine("SCANNUMBER: " + rawData.ScanNumber);
-                sw.WriteLine("RETENTIONTIME: " + rawData.RetentionTime);
-                sw.WriteLine("RETENTIONINDEX: " + rawData.RetentionIndex);
-                sw.WriteLine("PRECURSORMZ: " + rawData.PrecursorMz);
-                sw.WriteLine("PRECURSORTYPE: " + rawData.PrecursorType);
-                sw.WriteLine("IONMODE: " + rawData.IonMode);
-                sw.WriteLine("SPECTRUMTYPE: " + rawData.SpectrumType);
-                sw.WriteLine("FORMULA: " + rawData.Formula);
-                sw.WriteLine("INCHIKEY: " + rawData.InchiKey);
-                sw.WriteLine("INCHI: " + rawData.Inchi);
-                sw.WriteLine("SMILES: " + rawData.Smiles);
-                sw.WriteLine("AUTHORS: " + rawData.Authors);
-                sw.WriteLine("COLLISIONENERGY: " + rawData.CollisionEnergy);
-                sw.WriteLine("INSTRUMENT: " + rawData.Instrument);
-                sw.WriteLine("INSTRUMENTTYPE: " + rawData.InstrumentType);
-                sw.WriteLine("IONIZATION: " + rawData.Ionization);
-                sw.WriteLine("LICENSE: " + rawData.License);
-                sw.WriteLine("COMMENT: " + rawData.Comment);
+            foreach (var index in Enumerable.Range(0, rawDataList.Count)) {
+                sw.WriteLine("NAME: " + rawDataList[index].Name);
+                sw.WriteLine("SCANNUMBER: " + rawDataList[index].ScanNumber);
+                sw.WriteLine("RETENTIONTIME: " + rawDataList[index].RetentionTime);
+                sw.WriteLine("RETENTIONINDEX: " + rawDataList[index].RetentionIndex);
+                sw.WriteLine("PRECURSORMZ: " + rawDataList[index].PrecursorMz);
+                sw.WriteLine("PRECURSORTYPE: " + rawDataList[index].PrecursorType);
+                sw.WriteLine("IONMODE: " + rawDataList[index].IonMode);
+                sw.WriteLine("SPECTRUMTYPE: " + rawDataList[index].SpectrumType);
+                sw.WriteLine("FORMULA: " + rawDataList[index].Formula);
+                sw.WriteLine("INCHIKEY: " + rawDataList[index].InchiKey);
+                sw.WriteLine("INCHI: " + rawDataList[index].Inchi);
+                sw.WriteLine("SMILES: " + rawDataList[index].Smiles);
+                sw.WriteLine("AUTHORS: " + rawDataList[index].Authors);
+                sw.WriteLine("COLLISIONENERGY: " + rawDataList[index].CollisionEnergy);
+                sw.WriteLine("INSTRUMENT: " + rawDataList[index].Instrument);
+                sw.WriteLine("INSTRUMENTTYPE: " + rawDataList[index].InstrumentType);
+                sw.WriteLine("IONIZATION: " + rawDataList[index].Ionization);
+                sw.WriteLine("LICENSE: " + rawDataList[index].License);
+                sw.WriteLine("COMMENT: " + rawDataList[index].Comment);
 
-                var spectra = rawData.Ms2Spectrum.PeakList.OrderBy(n => n.Mz).ToList();
+                var spectra = rawDataList[index].Ms2Spectrum.PeakList.OrderBy(n => n.Mz).ToList();
                 var maxIntensity = spectra.Max(n => n.Intensity);
                 var spectraList = new List<string>();
-                var ms2Peaklist = FragmentAssigner.GetCentroidMsMsSpectrum(rawData);
+                var ms2Peaklist = FragmentAssigner.GetCentroidMsMsSpectrum(rawDataList[index]);
                 //var commentList = FragmentAssigner.IsotopicPeakAssignmentForComment(ms2Peaklist, param.Mass2Tolerance, param.MassTolType);
-                for (int i = 0; i < rawData.Ms2PeakNumber; i++)
+                for (int i = 0; i < rawDataList[index].Ms2PeakNumber; i++)
                 {
                     var mz = spectra[i].Mz;
                     var intensity = spectra[i].Intensity;
@@ -550,7 +554,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                     var comment = "";
 
                     var originalComment = spectra[i].Comment;
-                    var additionalComment = getProductIonComment(mz, formulaResults, sfdResults, rawData.IonMode);
+                    var additionalComment = getProductIonComment(mz, formulaResults[index], sfdResults[index], rawDataList[index].IonMode);
                     if (originalComment != "")
                         comment = originalComment + "; " + additionalComment;
                     else
@@ -572,13 +576,13 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
             }
         }
 
-        private static string getProductIonComment(double mz, List<FormulaResult> formulaResults, List<FragmenterResult> sfdResults, IonMode ionMode) {
-            if (sfdResults == null || sfdResults.Count == 0) return string.Empty;
-            if (formulaResults == null || formulaResults.Count == 0) return string.Empty;
+        private static string getProductIonComment(double mz, FormulaResult formulaResults, FragmenterResult sfdResults, IonMode ionMode) {
+            if (sfdResults == null ) return string.Empty;
+            if (formulaResults == null ) return string.Empty;
 
-            var productIonResult = formulaResults[0].ProductIonResult;
-            var annotationResult = formulaResults[0].AnnotatedIonResult;
-            var fragments = sfdResults[0].FragmentPics;
+            var productIonResult = formulaResults.ProductIonResult;
+            var annotationResult = formulaResults.AnnotatedIonResult;
+            var fragments = sfdResults.FragmentPics;
             if (fragments == null || fragments.Count == 0) { return ""; }
 
             foreach (var frag in fragments) {
