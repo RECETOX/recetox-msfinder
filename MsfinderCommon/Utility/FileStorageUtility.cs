@@ -506,8 +506,8 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                     foreach (var sfdFile in sfdFiles)
                     {
                         var sfdResult = FragmenterResultParcer.FragmenterResultReader(sfdFile);
-                        var formulaString = System.IO.Path.GetFileNameWithoutExtension(sfdFile);
-                        sfdResultMerge(sfdResults, sfdResult, formulaString);
+                        //var formulaString = System.IO.Path.GetFileNameWithoutExtension(sfdFile);
+                        sfdResultMerge(sfdResults, sfdResult, rawData);
                     }
                     //sfdResults = sfdResults.OrderByDescending(n => n.TotalScore).ToList();
                     
@@ -620,14 +620,14 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
 
             return string.Empty;
         }
-        private static void sfdResultMerge(List<FragmenterResult> mergedList, List<FragmenterResult> results, string formulaString = "")
+        private static void sfdResultMerge(List<FragmenterResult> mergedList, List<FragmenterResult> results, List<Rfx.Riken.OsakaUniv.RawData> rawdata)
         {
             if (results == null || results.Count == 0) return;
 
-            foreach (var result in results)
+            foreach (var index in Enumerable.Range(0, results.Count))
             {
-                result.Formula = formulaString;
-                mergedList.Add(result);
+                results[index].Formula = rawdata[index].Formula;
+                mergedList.Add(results[index]);
             }
         }
         public static string GetLabelForInsilicoSpectrum(string formula, double penalty, IonMode ionMode, string adductString)
