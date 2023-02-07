@@ -269,8 +269,12 @@ namespace Rfx.Riken.OsakaUniv
                     
                 }
             }
-            rawDataList.Add(rawData);
-
+            
+            if (rawData.Name != null)
+            {
+                rawDataList.Add(rawData);
+            }
+            
             foreach (var Data in rawDataList)
             {
                 setIsotopicIons(Data, param.Mass1Tolerance, param.MassTolType);
