@@ -91,7 +91,7 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
             Console.WriteLine("Start processing..");
 
             foreach(var file in this.queryFiles){
-                var structureFile = System.IO.Directory.GetFiles(file.StructureFolderPath, "*.sfd");
+                var structureFile = System.IO.Directory.GetFiles(file.StructureFolderPath, $"{file.FormulaFileName}.sfd");
                 if (structureFile.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFile);
 
                 var formulaFile = System.IO.Directory.GetFiles(Path.GetDirectoryName(file.FormulaFilePath), $"{file.FormulaFileName}.fgt");
