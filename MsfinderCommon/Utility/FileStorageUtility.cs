@@ -500,7 +500,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                         Console.WriteLine(error);
                     }
 
-                    var sfdFiles = System.IO.Directory.GetFiles(rawfile.StructureFolderPath);
+                    var sfdFiles = System.IO.Directory.GetFiles(rawfile.StructureFolderPath, $"{rawfile.FormulaFileName}.sfd");
                     var sfdResults = new List<FragmenterResult>();
 
                     foreach (var sfdFile in sfdFiles)
