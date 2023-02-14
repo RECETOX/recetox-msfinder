@@ -23,10 +23,11 @@ using org.openscience.cdk.smiles;
 
 namespace MsFinderTest
 {
-    public class MsfinderConsoleApp
+    public class MsfinderConsoleApp : IDisposable
     {
-        private readonly ITestOutputHelper _output;
         private readonly string _projectDir;
+        private readonly string _inputPath;
+        private readonly string _outputPath;
         private readonly AnalysisParamOfMsfinder _param;
         private readonly List<RawData> _rawDataList;
         private readonly List<NeutralLoss> _neutralLossDB;
@@ -37,10 +38,11 @@ namespace MsFinderTest
 
         public MsfinderConsoleApp(ITestOutputHelper output)
         {
-            _output = output;
-            _projectDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\.."));
+            _projectDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"../../../.."));
+            _inputPath = $"{_projectDir}/testdata/input/test.msp";
+            _outputPath = $"{_projectDir}/testdata/input/out.msp";
             _param = MsFinderIniParcer.Read($"{_projectDir}/MSFINDER.INI");
-            _rawDataList = RawDataParcer.RawDataFileReader($"{_projectDir}/testdata/input/test.msp", _param);
+            _rawDataList = RawDataParcer.RawDataFileReader(_inputPath, _param);
             _neutralLossDB = FileStorageUtility.GetNeutralLossDB();
             _productIonDB = FileStorageUtility.GetProductIonDB();
             _existFormulaDB = FileStorageUtility.GetExistFormulaDB();
@@ -53,41 +55,40 @@ namespace MsFinderTest
                 ChemOntologyDbParser.ConvertInChIKeyToChemicalOntology(_neutralLossDB, _fragmentOntologyDB);
             if (_fragmentOntologyDB != null && _chemicalOntologies != null)
                 ChemOntologyDbParser.ConvertInChIKeyToChemicalOntology(_chemicalOntologies, _fragmentOntologyDB);
+
+            workSpaceCleanup("test.fgt", "test.sfd", "out.msp");
+        }
+
+        public void Dispose()
+        {
+            workSpaceCleanup("test.fgt", "test.sfd", "out.msp");
         }
 
         [Fact]
         public void PeakAnnotation()
         {
-            new AnnotateProcess().Run($"{_projectDir}/testdata/input/test.msp", $"{_projectDir}/MSFINDER.INI",
-            $"{_projectDir}/testdata/input/out.msp");
+            new AnnotateProcess().Run(_inputPath, $"{_projectDir}/MSFINDER.INI", _outputPath);
 
-            var output = $"{_projectDir}/testdata/input/out.msp";
             var expected = $"{_projectDir}/testdata/expected/out_expected.msp";
 
-            var out_hash = GetHashCode(output);
+            var out_hash = GetHashCode(_outputPath);
             var expected_hash = GetHashCode(expected);
 
             Assert.Equal(out_hash, expected_hash);
         }
 
         [Fact]
-        public void formualResult()
+        public void formulaResult()
         {
-            var formulaFile = System.IO.Directory.GetFiles($"{_projectDir}/testdata/input", "test.fgt");
-            if (formulaFile.Length > 0)
-            {
-                FileStorageUtility.DeleteSfdFiles(formulaFile);
-            }
+            var output = $"{_projectDir}/testdata/input/test.fgt";
+            var expected = $"{_projectDir}/testdata/expected/test_expected.fgt";
 
             foreach (var rawData in _rawDataList)
             {
                 var formulaResult = MolecularFormulaFinder.GetMolecularFormulaScore(_productIonDB, _neutralLossDB, _existFormulaDB, rawData, _param);
                 var formualResults = new List<FormulaResult>() { formulaResult };
-                FormulaResultParcer.FormulaResultsWriter($"{_projectDir}/testdata/input/test.fgt", formualResults);
+                FormulaResultParcer.FormulaResultsWriter(output, formualResults);
             }
-
-            var output = $"{_projectDir}/testdata/input/test.fgt";
-            var expected = $"{_projectDir}/testdata/expected/test_expected.fgt";
 
             var out_hash = GetHashCode(output);
             var expected_hash = GetHashCode(expected);
@@ -99,38 +100,13 @@ namespace MsFinderTest
         [Fact]
         public void FragmenterResult()
         {
-            var structureFile = System.IO.Directory.GetFiles($"{_projectDir}/testdata/input/test", "test.sfd");
-            if (structureFile.Length > 0)
+            ObservableCollection<MsfinderQueryFile> queryFiles = FileStorageUtility.GetSingleAnalysisFileBeanCollection(_inputPath, _outputPath);
+            foreach (var file in queryFiles)
             {
-                FileStorageUtility.DeleteSfdFiles(structureFile);
-            }
-
-            foreach (var rawData in _rawDataList)
-            {
-                var formulaResult = MolecularFormulaFinder.GetMolecularFormulaScore(_productIonDB, _neutralLossDB, _existFormulaDB, rawData, _param);
-                if (rawData.Ms2PeakNumber <= 0 || rawData.Smiles == null || rawData.Smiles == string.Empty) return;
-                var structureQuery = new ExistStructureQuery(rawData.Name, rawData.InchiKey, rawData.InchiKey, new List<int>(), formulaResult.Formula, rawData.Smiles, string.Empty, 0, new DatabaseQuery());
-                if (structureQuery == null) return;
-
-                var eQueries = new List<ExistStructureQuery>() { structureQuery };
-
-                var adductIon = AdductIonParcer.GetAdductIonBean(rawData.PrecursorType);
-                var centroidSpectrum = FragmentAssigner.GetCentroidMsMsSpectrum(rawData);
-                var refinedPeaklist = FragmentAssigner.GetRefinedPeaklist(centroidSpectrum, _param.RelativeAbundanceCutOff,
-                    rawData.PrecursorMz, _param.Mass2Tolerance, _param.MassTolType, true);
-                var curatedPeaklist = PeakAssigner.getCuratedPeaklist(formulaResult.ProductIonResult);
-
-                var results = Riken.Metabolomics.StructureFinder.MainProcess.Fragmenter(eQueries,
-                                rawData, curatedPeaklist, refinedPeaklist, adductIon, formulaResult,
-                                _param, null, _fragmentOntologyDB);
-
-                foreach (var result in results)
+                foreach (var rawData in _rawDataList)
                 {
-                    result.TotalScore += formulaResult.TotalScore;
-                    result.Ontology = rawData.Ontology;
+                    PeakAssigner.Process(file, rawData, _param, _productIonDB, _neutralLossDB, _existFormulaDB, null, _fragmentOntologyDB);
                 }
-
-                FragmenterResultParcer.FragmenterResultWriter($"{_projectDir}/testdata/input/test/test.sfd", results, true);
             }
 
             var output = $"{_projectDir}/testdata/input/test/test.sfd";
@@ -152,13 +128,35 @@ namespace MsFinderTest
             var smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
             container = smilesParser.parseSmiles(input_smiles);
 
-            if (container != null && input_smiles.Contains('c')) {
+            if (container != null && input_smiles.Contains('c'))
+            {
                 Kekulization.Kekulize(container);
             }
 
             var output_smiles = MoleculeConverter.AtomContainerToSmiles(container);
 
             Assert.Equal(output_smiles, expected);
+        }
+
+        public void workSpaceCleanup(string formulaFilename, string structureFilename, string outputFilename)
+        {
+            var formulaFile = System.IO.Directory.GetFiles($"{_projectDir}/testdata/input", formulaFilename);
+            if (formulaFile.Length > 0)
+            {
+                FileStorageUtility.DeleteSfdFiles(formulaFile);
+            }
+
+            var structureFile = System.IO.Directory.GetFiles($"{_projectDir}/testdata/input/test", structureFilename);
+            if (structureFile.Length > 0)
+            {
+                FileStorageUtility.DeleteSfdFiles(structureFile);
+            }
+
+            var outputFile = System.IO.Directory.GetFiles($"{_projectDir}/testdata/input", outputFilename);
+            if (outputFile.Length > 0)
+            {
+                FileStorageUtility.DeleteSfdFiles(outputFile);
+            }
         }
 
         string GetHashCode(string filePath)
