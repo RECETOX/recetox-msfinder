@@ -53,7 +53,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Process
             FragmenterResultParcer.FragmenterResultWriter(exportStructureFilePath, results, true);
         }
 
-        private static List<Peak> getCuratedPeaklist(List<ProductIon> productIons)
+        public static List<Peak> getCuratedPeaklist(List<ProductIon> productIons)
         {
             var peaks = new List<Peak>();
             foreach (var ion in productIons) {
