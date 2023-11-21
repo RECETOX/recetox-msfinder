@@ -44,10 +44,16 @@ namespace Riken.Metabolomics.MsfinderCommon.Process
             var curatedPeaklist = getCuratedPeaklist(formulaResult.ProductIonResult);
             
             var results = MainProcess.Fragmenter(eQueries, rawData, curatedPeaklist, refinedPeaklist, adductIon, formulaResult, param, fragmentDB, fragmentOntologies);
-
+            
             foreach (var result in results) {
                 result.TotalScore += formulaResult.TotalScore;
                 result.Ontology = rawData.Ontology;
+            }
+            if (results.Count == 0)
+            {
+            // If the results is 0, write to a file in SMI format
+                var logSmileFilePath = FileStorageUtility.GetSmileLogFilePath(analysisFile.FormulaFilePath);
+                FileStorageUtility.WriteToSmiFile(rawData.Smiles, logSmileFilePath);
             }
 
             FragmenterResultParcer.FragmenterResultWriter(exportStructureFilePath, results, true);

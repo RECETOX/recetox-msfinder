@@ -96,6 +96,10 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
 
                 var formulaFile = System.IO.Directory.GetFiles(Path.GetDirectoryName(file.FormulaFilePath), $"{file.FormulaFileName}.fgt");
                 if (formulaFile.Length > 0) FileStorageUtility.DeleteSfdFiles(formulaFile);
+
+                // delete the previous run log_smiles.smi file if exist 
+                var logSmileFile = System.IO.Directory.GetFiles(Path.GetDirectoryName(file.FormulaFilePath), $"log_smiles.smi");
+                if (logSmileFile.Length > 0) FileStorageUtility.DeleteSfdFiles(logSmileFile);
             }
 
             executeProcess();

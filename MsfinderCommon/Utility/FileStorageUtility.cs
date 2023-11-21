@@ -473,20 +473,48 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                 return folderPath + "/" + formula + "." + SaveFileFormat.sfd;
             }
         }
+        public static string GetSmileLogFilePath(string folderPath)
+        {
+            folderPath = Path.GetDirectoryName(folderPath);
 
-        public static void DeleteSfdFiles(string[] structureFiles) {
-            foreach (var file in structureFiles) {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return folderPath + "\\" + "log_smiles.smi";
+            }
+            else
+            {
+                return folderPath + "/" + "log_smiles.smi";
+            }
+        }
+        public static void DeleteSfdFiles(string[] structureFiles)
+        {
+            foreach (var file in structureFiles)
+            {
                 File.Delete(file);
+            }
+        }
+        public static void WriteToSmiFile(string smile, string filePath)
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(filePath, true, Encoding.ASCII))
+                {
+                    sw.WriteLine(smile);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error writing to SMI log file: {ex.Message}");
             }
         }
         public static void PeakAnnotationResultExportAsMsp(string input, AnalysisParamOfMsfinder param, string exportFilePath)
         {
             using (var sw = new StreamWriter(exportFilePath, false, Encoding.ASCII))
             {
-                var files =  FileStorageUtility.GetAnalysisFileBeanCollection(input);
+                var files = FileStorageUtility.GetAnalysisFileBeanCollection(input);
                 if (File.Exists(input))
                     files = FileStorageUtility.GetSingleAnalysisFileBeanCollection(input, exportFilePath);
-                    
+
                 ///var files = FileStorageUtility.GetAnalysisFileBeanCollection(input);
                 //var files = queryFiles;
                 //var param = mainWindowVM.DataStorageBean.AnalysisParameter;
@@ -496,7 +524,8 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                 {
                     var rawData = RawDataParcer.RawDataFileReader(rawfile.RawDataFilePath, param);
                     var formulaResults = FormulaResultParcer.FormulaResultReader(rawfile.FormulaFilePath, out error); //.OrderByDescending(n => n.TotalScore).ToList();
-                    if (error != string.Empty) {
+                    if (error != string.Empty)
+                    {
                         Console.WriteLine(error);
                     }
 
@@ -510,10 +539,14 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
                         sfdResultMerge(sfdResults, sfdResult, rawData);
                     }
                     //sfdResults = sfdResults.OrderByDescending(n => n.TotalScore).ToList();
-                    
+
                     if (rawData.Count == formulaResults.Count && rawData.Count == sfdResults.Count)
                     {
                         writeResultAsMsp(sw, rawData, formulaResults, sfdResults, param);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Fragment annotation failed\nCount of rawData ({rawData.Count}), formulaResults ({formulaResults.Count}), and sfdResults ({sfdResults.Count}) are not equal");
                     }
                 }
             }
