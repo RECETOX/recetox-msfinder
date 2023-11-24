@@ -467,26 +467,17 @@ namespace Riken.Metabolomics.MsfinderCommon.Utility {
         }
 
         public static string GetStructureDataFilePath(string folderPath, string formula) {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)){
-                return folderPath + "\\" + formula + "." + SaveFileFormat.sfd;
-            }else{
-                return folderPath + "/" + formula + "." + SaveFileFormat.sfd;
-            }
+            return Path.Combine(folderPath, formula + "." + SaveFileFormat.sfd);
         }
         public static string GetSmileLogFilePath(string folderPath)
         {
             folderPath = Path.GetDirectoryName(folderPath);
+            
+            string fileName = "log_smiles.smi";
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return folderPath + "\\" + "log_smiles.smi";
-            }
-            else
-            {
-                return folderPath + "/" + "log_smiles.smi";
-            }
+            return Path.Combine(folderPath, fileName);
         }
-        public static void DeleteSfdFiles(string[] structureFiles)
+        public static void DeleteFiles(string[] structureFiles)
         {
             foreach (var file in structureFiles)
             {

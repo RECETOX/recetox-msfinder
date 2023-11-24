@@ -92,14 +92,14 @@ namespace Riken.Metabolomics.MsfinderConsoleApp.Process {
 
             foreach(var file in this.queryFiles){
                 var structureFile = System.IO.Directory.GetFiles(file.StructureFolderPath, $"{file.FormulaFileName}.sfd");
-                if (structureFile.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFile);
+                if (structureFile.Length > 0) FileStorageUtility.DeleteFiles(structureFile);
 
                 var formulaFile = System.IO.Directory.GetFiles(Path.GetDirectoryName(file.FormulaFilePath), $"{file.FormulaFileName}.fgt");
-                if (formulaFile.Length > 0) FileStorageUtility.DeleteSfdFiles(formulaFile);
+                if (formulaFile.Length > 0) FileStorageUtility.DeleteFiles(formulaFile);
 
                 // delete the previous run log_smiles.smi file if exist 
                 var logSmileFile = System.IO.Directory.GetFiles(Path.GetDirectoryName(file.FormulaFilePath), $"log_smiles.smi");
-                if (logSmileFile.Length > 0) FileStorageUtility.DeleteSfdFiles(logSmileFile);
+                if (logSmileFile.Length > 0) FileStorageUtility.DeleteFiles(logSmileFile);
             }
 
             executeProcess();

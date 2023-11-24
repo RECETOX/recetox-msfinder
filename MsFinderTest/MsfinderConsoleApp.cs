@@ -39,9 +39,9 @@ namespace MsFinderTest
         public MsfinderConsoleApp(ITestOutputHelper output)
         {
             _projectDir = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"../../../.."));
-            _inputPath = $"{_projectDir}/testdata/input/test.msp";
-            _outputPath = $"{_projectDir}/testdata/input/out.msp";
-            _param = MsFinderIniParcer.Read($"{_projectDir}/MSFINDER.INI");
+            _inputPath = Path.Combine(_projectDir, "testdata", "input", "test.msp");
+            _outputPath = Path.Combine(_projectDir, "testdata", "input", "out.msp");
+            _param = MsFinderIniParcer.Read(Path.Combine(_projectDir, "MSFINDER.INI"));
             _rawDataList = RawDataParcer.RawDataFileReader(_inputPath, _param);
             _neutralLossDB = FileStorageUtility.GetNeutralLossDB();
             _productIonDB = FileStorageUtility.GetProductIonDB();
@@ -55,21 +55,20 @@ namespace MsFinderTest
                 ChemOntologyDbParser.ConvertInChIKeyToChemicalOntology(_neutralLossDB, _fragmentOntologyDB);
             if (_fragmentOntologyDB != null && _chemicalOntologies != null)
                 ChemOntologyDbParser.ConvertInChIKeyToChemicalOntology(_chemicalOntologies, _fragmentOntologyDB);
-
-            workSpaceCleanup("test.fgt", "test.sfd", "out.msp");
         }
 
         public void Dispose()
         {
-            workSpaceCleanup("test.fgt", "test.sfd", "out.msp");
+            workSpaceCleanup("test.fgt", "test.sfd", "out.msp", "log_smiles.smi", "test");
+            workSpaceCleanup("test_log.fgt", "test_log.sfd", "out.msp", "log_smiles.smi", "test_log");
         }
 
         [Fact]
         public void PeakAnnotation()
         {
-            new AnnotateProcess().Run(_inputPath, $"{_projectDir}/MSFINDER.INI", _outputPath);
+            new AnnotateProcess().Run(_inputPath, Path.Combine(_projectDir, "MSFINDER.INI"), _outputPath);
 
-            var expected = $"{_projectDir}/testdata/expected/out_expected.msp";
+            var expected = Path.Combine(_projectDir, "testdata", "expected", "out_expected.msp");
 
             var out_hash = GetHashCode(_outputPath);
             var expected_hash = GetHashCode(expected);
@@ -80,8 +79,8 @@ namespace MsFinderTest
         [Fact]
         public void formulaResult()
         {
-            var output = $"{_projectDir}/testdata/input/test.fgt";
-            var expected = $"{_projectDir}/testdata/expected/test_expected.fgt";
+            var output = Path.Combine(_projectDir, "testdata", "input", "test.fgt");
+            var expected = Path.Combine(_projectDir, "testdata", "expected", "test_expected.fgt");
 
             foreach (var rawData in _rawDataList)
             {
@@ -109,8 +108,8 @@ namespace MsFinderTest
                 }
             }
 
-            var output = $"{_projectDir}/testdata/input/test/test.sfd";
-            var expected = $"{_projectDir}/testdata/expected/test_expected.sfd";
+            var output = Path.Combine(_projectDir, "testdata", "input", "test", "test.sfd");
+            var expected = Path.Combine(_projectDir, "testdata", "expected", "test_expected.sfd");
 
             var out_hash = GetHashCode(output);
             var expected_hash = GetHashCode(expected);
@@ -137,25 +136,52 @@ namespace MsFinderTest
 
             Assert.Equal(output_smiles, expected);
         }
-
-        public void workSpaceCleanup(string formulaFilename, string structureFilename, string outputFilename)
+        
+        [Fact]
+        public void LogSmile()
         {
-            var formulaFile = System.IO.Directory.GetFiles($"{_projectDir}/testdata/input", formulaFilename);
+            new AnnotateProcess().Run(Path.Combine(_projectDir, "testdata", "input", "test_log.msp"), Path.Combine(_projectDir, "MSFINDER.INI"), _outputPath);
+            var folderPath = Path.GetDirectoryName(_outputPath);
+            var logSmile = Path.Combine(folderPath, "log_smiles.smi");
+            var expected = Path.Combine(_projectDir, "testdata", "expected", "log_smiles_expected.smi");
+
+            var out_hash = GetHashCode(logSmile);
+            var expected_hash = GetHashCode(expected);
+
+            Assert.Equal(out_hash, expected_hash);
+        }
+
+        public void workSpaceCleanup(string formulaFilename, string structureFilename, string outputFilename, string logFile, string folderName)
+        {
+            var path = Path.Combine(_projectDir, "testdata", "input");
+
+            var formulaFile = System.IO.Directory.GetFiles(path, formulaFilename);
             if (formulaFile.Length > 0)
             {
-                FileStorageUtility.DeleteSfdFiles(formulaFile);
+                FileStorageUtility.DeleteFiles(formulaFile);
             }
 
-            var structureFile = System.IO.Directory.GetFiles($"{_projectDir}/testdata/input/test", structureFilename);
-            if (structureFile.Length > 0)
+            bool directoryExists = Directory.Exists(Path.Combine(path, folderName));
+
+            if(directoryExists)
             {
-                FileStorageUtility.DeleteSfdFiles(structureFile);
+                var structureFile = System.IO.Directory.GetFiles(Path.Combine(path, folderName), structureFilename);
+                if (structureFile.Length > 0)
+                {
+                    FileStorageUtility.DeleteFiles(structureFile);
+                }
             }
 
-            var outputFile = System.IO.Directory.GetFiles($"{_projectDir}/testdata/input", outputFilename);
+            var outputFile = System.IO.Directory.GetFiles(path, outputFilename);
             if (outputFile.Length > 0)
             {
-                FileStorageUtility.DeleteSfdFiles(outputFile);
+                FileStorageUtility.DeleteFiles(outputFile);
+            }
+
+            var logSmileFile = System.IO.Directory.GetFiles(path, logFile);
+            if (logSmileFile.Length > 0)
+            {
+                FileStorageUtility.DeleteFiles(logSmileFile);
             }
         }
 

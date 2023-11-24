@@ -26,7 +26,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Process
             FormulaResultParcer.FormulaResultsWriter(analysisFile.FormulaFilePath, formualResults);
 
             //var structureFiles = System.IO.Directory.GetFiles(analysisFile.StructureFolderPath, "*.sfd");
-            //if (structureFiles.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFiles);
+            //if (structureFiles.Length > 0) FileStorageUtility.DeleteFiles(structureFiles);
 
             var exportStructureFilePath = FileStorageUtility.GetStructureDataFilePath(analysisFile.StructureFolderPath, analysisFile.RawDataFileName);
             if (rawData.Ms2PeakNumber <= 0 || rawData.Smiles == null || rawData.Smiles == string.Empty) return;
