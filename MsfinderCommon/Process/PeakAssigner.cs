@@ -26,7 +26,7 @@ namespace Riken.Metabolomics.MsfinderCommon.Process
             FormulaResultParcer.FormulaResultsWriter(analysisFile.FormulaFilePath, formualResults);
 
             //var structureFiles = System.IO.Directory.GetFiles(analysisFile.StructureFolderPath, "*.sfd");
-            //if (structureFiles.Length > 0) FileStorageUtility.DeleteSfdFiles(structureFiles);
+            //if (structureFiles.Length > 0) FileStorageUtility.DeleteFiles(structureFiles);
 
             var exportStructureFilePath = FileStorageUtility.GetStructureDataFilePath(analysisFile.StructureFolderPath, analysisFile.RawDataFileName);
             if (rawData.Ms2PeakNumber <= 0 || rawData.Smiles == null || rawData.Smiles == string.Empty) return;
@@ -44,10 +44,16 @@ namespace Riken.Metabolomics.MsfinderCommon.Process
             var curatedPeaklist = getCuratedPeaklist(formulaResult.ProductIonResult);
             
             var results = MainProcess.Fragmenter(eQueries, rawData, curatedPeaklist, refinedPeaklist, adductIon, formulaResult, param, fragmentDB, fragmentOntologies);
-
+            
             foreach (var result in results) {
                 result.TotalScore += formulaResult.TotalScore;
                 result.Ontology = rawData.Ontology;
+            }
+            if (results.Count == 0)
+            {
+            // If the results is 0, write to a file in SMI format
+                var logSmileFilePath = FileStorageUtility.GetSmileLogFilePath(analysisFile.FormulaFilePath);
+                FileStorageUtility.WriteToSmiFile(rawData.Smiles, logSmileFilePath);
             }
 
             FragmenterResultParcer.FragmenterResultWriter(exportStructureFilePath, results, true);
