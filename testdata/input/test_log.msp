@@ -35,3 +35,41 @@ NUM PEAKS: 20
 186.0       39.96
 187.0       5.89
 188.0       0.5
+
+FORMULA: C9H11N5O
+CASNO: 2000176-75-9
+ID: 48082
+COMMENT: SpectrumID: 868007; Source: SK-27-3462-6; QI: 346; Class: Methoxyanilines; CASRN not real! |RI:2129|
+COMPOUND_NAME: (5-amino-1H-1,2,4-triazol-3-yl)-(4-methoxyphenyl)amine
+PARENT_MASS: 205.09636
+RETENTION_INDEX: 2129.0
+PUBCHEMID: 2747532
+NOMINAL_MASS: 205
+INCHI: InChI=1S/C9H11N5O/c1-15-7-4-2-6(3-5-7)11-9-12-8(10)13-14-9/h2-5H,1H3,(H4,10,11,12,13,14)
+ISOMERIC_SMILES: COc1ccc(Nc2nc(=N)[nH][nH]2)cc1
+NUM PEAKS: 25
+44.0        379.66
+81.0        179.84
+95.0        119.89
+99.0        229.79
+107.0       189.83
+121.0       99.91
+122.0       139.87
+134.0       119.89
+148.0       89.92
+149.0       319.71
+163.0       89.92
+174.0       79.93
+175.0       7.79
+176.0       0.5
+179.0       59.95
+180.0       6.39
+181.0       0.4
+190.0       79.93
+191.0       8.79
+192.0       0.6
+204.0       109.9
+205.0       999.0
+206.0       169.85
+207.0       8.59
+208.0       0.5
