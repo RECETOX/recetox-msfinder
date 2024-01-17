@@ -461,7 +461,16 @@ namespace Riken.Metabolomics.StructureFinder.Utility
                 var smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
                 container = smilesParser.parseSmiles(smiles);
                 if (container != null && smiles.Contains('c')) {
-                    Kekulization.Kekulize(container);
+                    try
+                    {
+                        Kekulization.Kekulize(container);
+                    }
+                    catch (NullReferenceException)
+                    {
+                        error += "SMILES: cannot be converted. NullReferenceException.\r\n";
+                        System.Console.WriteLine($"{smiles}: cannot be converted. CDK NullReferenceException.");
+                        return null;
+                    }
                 }
                 if (tmsCount > 0 || meoxCount > 0)
                     container = Derivatization.TmsMeoxDerivatization(container, tmsCount, meoxCount);
